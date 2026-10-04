@@ -106,8 +106,14 @@ Assembly-UnityScript-firstpass.unityproj
 /Data/.~lock.Description.odt#
 /Deployments/web
 /Deployments
-/Code/ldjam56/Assets/Packages
+/Code/ldjam60/Assets/Packages
 
-Code/ldjam56/.vscode/extensions.json
-Code/ldjam56/.vscode/launch.json
-Code/ldjam56/.vscode/settings.json
+Code/ldjam60/.vscode/extensions.json
+Code/ldjam60/.vscode/launch.json
+Code/ldjam60/.vscode/settings.json
+/Code/ldjam60/Assets/_Recovery
+/Code/ldjam60/Assets/_Recovery.meta
+Code/ldjam60/Assets/Resources/PerformanceTestRunInfo.json
+Code/ldjam60/Assets/Resources/PerformanceTestRunInfo.json.meta
+Code/ldjam60/Assets/Resources/PerformanceTestRunSettings.json
+Code/ldjam60/Assets/Resources/PerformanceTestRunSettings.json.meta
