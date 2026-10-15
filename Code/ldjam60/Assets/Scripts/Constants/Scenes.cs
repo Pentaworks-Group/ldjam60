@@ -71,31 +71,32 @@ namespace Assets.Scripts.Constants
         //    }
         //}
 
-        //public const String AudioTestName = "AudioTests";
-        //private static Scene audioTest;
-        //public static Scene AudioTest
-        //{
-        //    get
-        //    {
-        //        if (audioTest == default)
-        //        {
-        //            audioTest = new Scene()
-        //            {
-        //                Name = AudioTestName,
-        //                BackgroundClips = new List<String>()
-        //                {
-        //                }
-        //            };
-        //        }
+        public const String SampleSceneName = "SampleScene";
+        private static Scene sampleScene;
+        public static Scene SampleScene
+        {
+            get
+            {
+                if (sampleScene == default)
+                {
+                    sampleScene = new Scene()
+                    {
+                        Name = SampleSceneName,
+                        BackgroundClips = new List<String>()
+                        {
+                        }
+                    };
+                }
 
-        //        return audioTest;
-        //    }
-        //}
+                return sampleScene;
+            }
+        }
 
         public static List<Scene> GetGameScenes()
         {
             return new List<Scene>()
             {
+                SampleScene
                 //Start,
                 //MainMenu,
                 //Game
