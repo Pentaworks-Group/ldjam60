@@ -2,7 +2,8 @@
 	{
 		"Reference": "Default",		
 		"BackgroundReferences": [
-			"Default"
+			"Background_Day",
+			"Background_Night"
 		]
 	}
 ]

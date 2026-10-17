@@ -1,12 +1,17 @@
 [
-	{
-		"Reference": "default",
-		"Name": "Bob",
-		"Level": 
-		{
-			"Reference": "Default",
-			"IsReferenced": true
-		},
-		"PlayerStartCredits": 1000,
-	}
+  {
+    "Reference": "default",
+    "Name": "Bob",
+    "Level": {
+      "Reference": "Default",
+      "IsReferenced": true
+    },
+    "PlayerStartCredits": 1000,
+    "AvailableCatapults": [
+      {
+        "Reference": "Default",
+        "IsReferenced": true
+      }
+    ]
+  }
 ]

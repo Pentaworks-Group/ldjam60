@@ -9,7 +9,7 @@ namespace Assets.Scripts.Core.Models
         public String Name { get; set; }
         public Vector2 Position { get; set; }
         public Catapult Catapult { get; set; }
-        public Double Credits { get; set; }
+        public Decimal Credits { get; set; }
         public Double Health { get; set; }
     }
 }

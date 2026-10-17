@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Linq;
 
 using Assets.Scripts.Core.Definitions;
 
@@ -15,9 +17,30 @@ namespace Assets.Scripts.Core
         private readonly DefinitionCache<Definitions.CatapultDefinition> catapultCache = new DefinitionCache<Definitions.CatapultDefinition>();
         private readonly DefinitionCache<Definitions.ProjectileDefinition> projectileCache = new DefinitionCache<Definitions.ProjectileDefinition>();
 
+        private GameMode selectedGameMode;
+
         protected override GameState InitializeGameState()
         {
-            return new GameState();
+            var gameMode = this.selectedGameMode;
+
+            if (gameMode == default)
+            {
+                gameMode = gameModeCache.Values.FirstOrDefault(m => m.IsDefault == true);
+
+                if (gameMode == default)
+                {
+                    gameMode = gameModeCache.Values.FirstOrDefault();
+                }
+            }
+
+            if (gameMode != default)
+            {
+                var converter = new GameModeConverter(gameMode);
+
+                return converter.Convert();
+            }
+
+            throw new NotSupportedException("How the heck?");
         }
 
         protected override PlayerOptions InitializePlayerOptions()
@@ -40,9 +63,7 @@ namespace Assets.Scripts.Core
             yield return new DefinitionLoader<LevelDefinition>(this.levelCache).LoadDefinitions("Levels.json");
             yield return new DefinitionLoader<ProjectileDefinition>(this.projectileCache).LoadDefinitions("Projectiles.json");
             yield return new SimpleReferenceLoader<CatapultDefinition>(this.catapultCache, this.projectileCache).LoadDefinitions("Catapults.json");
-            yield return new SimpleReferenceLoader<GameMode>(this.gameModeCache, this.levelCache).LoadDefinitions("GameModes.json");
-
-            Debug.Log("loaded definitions");
+            yield return new SimpleReferenceLoader<GameMode>(this.gameModeCache, this.catapultCache, this.levelCache).LoadDefinitions("GameModes.json");
         }
     }
 }

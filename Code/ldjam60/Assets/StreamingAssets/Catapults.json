@@ -6,6 +6,10 @@
 			"Min": 0,
 			"Max": 100
 		},
+		"PossibleFiringAngle": {
+			"Min": 10,
+			"Max": 90
+		},
 		"AvailableProjectiles": [
 			{
 				"Reference": "Stone",

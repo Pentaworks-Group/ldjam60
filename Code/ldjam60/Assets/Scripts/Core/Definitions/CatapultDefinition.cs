@@ -9,6 +9,7 @@ namespace Assets.Scripts.Core.Definitions
     {
         public String TemplateReference { get; set; }
         public GameFrame.Core.Math.Range PossibleFiringStrength { get; set; }
+        public GameFrame.Core.Math.Range PossibleFiringAngle { get; set; }
         public List<ProjectileDefinition> AvailableProjectiles { get; set; }
     }
 }

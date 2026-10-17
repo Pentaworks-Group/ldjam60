@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Core.Models.Players
 {
-    public class HumanPlayer
+    public class HumanPlayer : Player
     {
     }
 }
