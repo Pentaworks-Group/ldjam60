@@ -1,0 +1,12 @@
+[
+ {
+	"Reference": "Default",
+	"TemplateReference": "Catapult",
+	"AvailableProjectiles": [
+		{
+			"Reference": "Stone",
+			"IsReferenced": true
+		}
+	]
+ }
+]

@@ -1,0 +1,9 @@
+[
+	{
+		"Reference": "Stone",
+		"Name": "Stone",
+		"Cost": 0,
+		"Weight": 1000,
+		"TemplateReference": "Stone"
+	}
+]
