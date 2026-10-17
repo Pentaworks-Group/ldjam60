@@ -1,26 +1,32 @@
 using Assets.Scripts.Core.Definitions;
-using UnityEngine;
-using Vector2 = GameFrame.Core.Math.Vector2;
-using UnityVector3 = UnityEngine.Vector3;
-using UnityVector2 = UnityEngine.Vector2;
 using System.Collections.Generic;
+using System.Drawing;
+using UnityEngine;
+using UnityVector2 = UnityEngine.Vector2;
+using UnityVector3 = UnityEngine.Vector3;
+using Vector2 = GameFrame.Core.Math.Vector2;
 
 
 namespace Assets.Scripts.Map
 {
     public class GenerationBehaviour : MonoBehaviour
     {
-        private MapDefinition _definition = new MapDefinition()
-        {
-            Size = new Vector2(100, 100),
-            TextureMap = GenerateTriangleTexture()
-        };
+
+
 
 
         public void Start()
         {
 
             Debug.Log("Starting");
+            Vector2 size = new(1000, 1000);
+            MapDefinition _definition = new MapDefinition()
+            {
+                Size = size,
+                TextureMap = GenerateTestEnvironment(1, size)
+            };
+
+
             MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = new Material(Shader.Find("Standard"));
             MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
@@ -69,6 +75,8 @@ namespace Assets.Scripts.Map
             meshFilter.mesh = mesh;
 
             MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
+
+            this.gameObject.transform.position = new UnityVector3(-xSize / 2, -ySize / 2, -10);
         }
 
         private static List<int> GetTriangleList(List<Vector2> boundingPoints)
@@ -215,33 +223,33 @@ namespace Assets.Scripts.Map
             return !(has_neg && has_pos);
         }
 
-        private static int[,] GenerateTriangleTexture()
+
+        private static int[,] GenerateTestEnvironment(int material, Vector2 size)
         {
-            Debug.Log("Generating texture");
-            int[,] texture = new int[100, 100];
+            int width = (int)size.X;
+            int height = (int)size.Y;
 
-            // Define the vertical bounds of the triangle
-            int topRow = 10;
-            int bottomRow = 90;
-            int centerCol = 50;
+            int[,] texture = new int[width, height];
 
-            for (int row = topRow; row <= bottomRow; row++)
+            // Random seed: each call produces a different landscape
+            float seed = Random.Range(0f, 1000f);
+
+            for (int c = 0; c < width; c++)
             {
-                // Linearly scale the half-width of the triangle from 0 at the peak 
-                // to 40 at the baseline (row 90)
-                double progress = (double)(row - topRow) / (bottomRow - topRow);
-                int halfWidth = (int)(progress * 40);
+                // Layered Perlin noise: broad hills + medium bumps + fine detail
+                float noise = Mathf.PerlinNoise((c + seed) * 0.05f, seed) * 0.5f
+                            + Mathf.PerlinNoise((c + seed) * 0.15f, seed + 100f) * 0.3f
+                            + Mathf.PerlinNoise((c + seed) * 0.5f, seed + 200f) * 0.2f;
 
-                int startCol = centerCol - halfWidth;
-                int endCol = centerCol + halfWidth;
+                float columnHeight = noise * height * 0.45f;
+                columnHeight = Mathf.Clamp(columnHeight, 1, height - 1);
 
-                // Fill the span for the current row
-                for (int col = startCol; col <= endCol; col++)
+                // Fill from the bottom up: ground sits at the bottom of the texture
+                for (int r = height - 1; r >= height - columnHeight; r--)
                 {
-                    texture[row, col] = 1;
+                    texture[r, c] = material;
                 }
             }
-
             return texture;
         }
 
