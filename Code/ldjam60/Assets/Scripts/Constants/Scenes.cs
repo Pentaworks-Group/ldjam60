@@ -8,98 +8,108 @@ namespace Assets.Scripts.Constants
 {
     public static class Scenes
     {
-        //public const String MainMenuName = "MainMenu";
-        //private static Scene mainMenu;
-        //public static Scene MainMenu
-        //{
-        //    get
-        //    {
-        //        if (mainMenu == default)
-        //        {
-        //            mainMenu = new Scene()
-        //            {
-        //                Name = MainMenuName,
-        //                IsStoppingBackgroundMusic = true
-        //            };
-        //        }
-
-        //        return mainMenu;
-        //    }
-        //}
-
-        //public const String GameName = "Game";
-        //private static Scene game;
-        //public static Scene Game
-        //{
-        //    get
-        //    {
-        //        if (game == default)
-        //        {
-        //            game = new Scene()
-        //            {
-        //                Name = GameName,
-        //                IsStoppingBackgroundMusic = true,
-        //                BackgroundClips = new List<String>() { }
-        //            };
-        //        }
-
-        //        return game;
-        //    }
-        //}
-
-        //public const String StartName = "Start";
-        //private static Scene start;
-        //public static Scene Start
-        //{
-        //    get
-        //    {
-        //        if (start == default)
-        //        {
-        //            start = new Scene()
-        //            {
-        //                Name = StartName,
-        //                IsStoppingBackgroundMusic = true,
-        //                //AmbienceClips = new List<String>()
-        //                //{
-        //                //    "WoodSound"
-        //                //},
-        //                BackgroundClips = new List<String>() { }
-        //            };
-        //        }
-
-        //        return start;
-        //    }
-        //}
-
-        public const String SampleSceneName = "SampleScene";
-        private static Scene sampleScene;
-        public static Scene SampleScene
+        public const String MainMenuName = "MainMenu";
+        private static Scene mainMenu;
+        public static Scene MainMenu
         {
             get
             {
-                if (sampleScene == default)
+                if (mainMenu == default)
                 {
-                    sampleScene = new Scene()
+                    mainMenu = new Scene()
                     {
-                        Name = SampleSceneName,
-                        BackgroundClips = new List<String>()
-                        {
-                        }
+                        Name = MainMenuName,
+                        IsStoppingBackgroundMusic = true
                     };
                 }
 
-                return sampleScene;
+                return mainMenu;
             }
         }
+
+        public const String GameName = "Game";
+        private static Scene game;
+        public static Scene Game
+        {
+            get
+            {
+                if (game == default)
+                {
+                    game = new Scene()
+                    {
+                        Name = GameName,
+                        IsStoppingBackgroundMusic = true,
+                        BackgroundClips = new List<String>() { }
+                    };
+                }
+
+                return game;
+            }
+        }
+
+
+        public const String CreditsName = "Credits";
+        private static Scene credits;
+        public static Scene Credits
+        {
+            get
+            {
+                if (credits == default)
+                {
+                    credits = new Scene()
+                    {
+                        Name = CreditsName,
+                    };
+                }
+
+                return credits;
+            }
+        }
+
+        public const String PhysicsTestName = "PhysicsTest";
+        private static Scene physicsTest;
+        public static Scene PhysicsTest
+        {
+            get
+            {
+                if (physicsTest == default)
+                {
+                    physicsTest = new Scene()
+                    {
+                        Name = PhysicsTestName,
+                    };
+                }
+
+                return physicsTest;
+            }
+        }
+
+        public const String MapTestName = "MapTest";
+        private static Scene mapTest;
+        public static Scene MapTest
+        {
+            get
+            {
+                if (mapTest == default)
+                {
+                    mapTest = new Scene()
+                    {
+                        Name = MapTestName,
+                    };
+                }
+
+                return mapTest;
+            }
+        }
+
 
         public static List<Scene> GetGameScenes()
         {
             return new List<Scene>()
             {
-                SampleScene
-                //Start,
-                //MainMenu,
-                //Game
+                MainMenu,
+                Game,
+                Credits,
             };
         }
 
@@ -107,7 +117,8 @@ namespace Assets.Scripts.Constants
         {
             return new List<Scene>()
             {
-                //AudioTest
+                PhysicsTest, 
+                MapTest,
             };
         }
 
