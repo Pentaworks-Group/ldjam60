@@ -1,7 +1,6 @@
 using System.Collections;
 
 using Assets.Scripts.Core.Definitions;
-using Assets.Scripts.Core.Definitions.Loaders;
 
 using GameFrame.Core.Definitions.Loaders;
 
@@ -38,10 +37,10 @@ namespace Assets.Scripts.Core
 
         protected override IEnumerator LoadDefintions()
         {
+            yield return new DefinitionLoader<LevelDefinition>(this.levelCache).LoadDefinitions("Levels.json");
             yield return new DefinitionLoader<ProjectileDefinition>(this.projectileCache).LoadDefinitions("Projectiles.json");
-            yield return new CatapultLoader(this.catapultCache, this.projectileCache).LoadDefinitions("Catapults.json");
-            yield return new LevelLoader(this.levelCache, this.catapultCache).LoadDefinitions("Levels.json");
-            yield return new GameModeLoader(this.gameModeCache, this.levelCache).LoadDefinitions("GameModes.json");
+            yield return new SimpleReferenceLoader<CatapultDefinition>(this.catapultCache, this.projectileCache).LoadDefinitions("Catapults.json");
+            yield return new SimpleReferenceLoader<GameMode>(this.gameModeCache, this.levelCache).LoadDefinitions("GameModes.json");
             Debug.Log("loaded definitions");
         }
     }
