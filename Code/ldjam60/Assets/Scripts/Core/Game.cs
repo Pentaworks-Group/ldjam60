@@ -6,8 +6,6 @@ using Assets.Scripts.Core.Definitions;
 
 using GameFrame.Core.Definitions.Loaders;
 
-using UnityEngine;
-
 namespace Assets.Scripts.Core
 {
     public class Game : GameFrame.Core.Game<GameState, PlayerOptions>
