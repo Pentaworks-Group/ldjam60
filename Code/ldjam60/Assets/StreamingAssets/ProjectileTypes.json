@@ -4,8 +4,8 @@
     "Name": "Stone",
     "Cost": 0,
     "Mass": {
-      "Min": 900,
-      "Max": 1100
+      "Min": 0.9,
+      "Max": 1.1
     },
     "TemplateReference": "Rock"
   }
