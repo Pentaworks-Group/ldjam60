@@ -16,7 +16,14 @@
  - 
    
 ## GamePlay:
- - 
+- map rending
+- map file/stucture
+- physics (maybe use unity & mesh renderer)
+- bot/multiplayer
+- object (catapults, )
+- firemodes (multishot, fireshot, explosive shot ...)
+- projectile handling (interactive objects)
+- aiming (strength, angle)
  
 ## UI: 
  - 
@@ -34,6 +41,7 @@
  - 
   
 # Ideas:
- -  
+- aiming help
+- destructive environment
   
 
