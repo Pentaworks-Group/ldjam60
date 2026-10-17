@@ -1,34 +1,40 @@
 using Assets.Scripts.Core.Definitions;
+using GameFrame.Core.Extensions;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
+using static UnityEngine.UI.CanvasScaler;
 using UnityVector2 = UnityEngine.Vector2;
 using UnityVector3 = UnityEngine.Vector3;
 using Vector2 = GameFrame.Core.Math.Vector2;
-
 
 namespace Assets.Scripts.Map
 {
     public class GenerationBehaviour : MonoBehaviour
     {
+        [SerializeField]
+        private Material Ground;
 
-
-
-
-        public void Start()
+        private void Awake()
         {
+            //Base.Core.Game.ExecuteAfterInstantation(Init);
+            Init();
+        }
 
+        private void Init()
+        {
             Debug.Log("Starting");
             Vector2 size = new(1000, 1000);
+
             MapDefinition _definition = new MapDefinition()
             {
                 Size = size,
                 TextureMap = GenerateTestEnvironment(1, size)
             };
 
+            Physics.gravity = new UnityVector3(0, 3 * Physics.gravity.y, 0);
+
 
             MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = new Material(Shader.Find("Standard"));
             MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
 
