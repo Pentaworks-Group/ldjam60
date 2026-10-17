@@ -41,38 +41,27 @@ namespace Assets.Scripts.Map
             var boundaryPoints = GetBoundingPoints(map, 1);
             int numBoundaryPoints = boundaryPoints.Count;
 
-            //float minX = boundaryPoints.Min(p => p.X);
-            //float maxX = boundaryPoints.Max(p => p.X);
-            //float minY = boundaryPoints.Min(p => p.Y);
-            //float maxY = boundaryPoints.Max(p => p.Y);
-            //float boundsWidth = maxX - minX;
-            //float boundsHeight = maxY - minY;
-
-            //UnityVector2[] uvs = new UnityVector2[numBoundaryPoints];
-            UnityVector3[] vertices = new UnityVector3[numBoundaryPoints];
+            UnityVector3[] vertices = new UnityVector3[numBoundaryPoints * 2];
             for (int i = 0; i < numBoundaryPoints; i++)
             {
                 Vector2 point = boundaryPoints[i];
                 float flippedY = ySize - point.Y;
 
-                vertices[i] = new Vector3(point.X, flippedY, 0f);
 
-                //float u = point.X / xSize;
-                //float v = flippedY / ySize;
+                vertices[i] = new UnityVector3(point.X, flippedY, -5f);
+                vertices[i + numBoundaryPoints] = new UnityVector3(point.X, flippedY, 5f);
 
-                //float u = (point.X - minX) / boundsWidth;
-                //float v = 1f - ((point.Y - minY) / boundsHeight);
-                //uvs[i] = new UnityVector2(u, v);
 
             }
 
             mesh.vertices = vertices;
-            //mesh.uv = uvs;
 
 
             List<int> triangles = GetTriangleList(boundaryPoints);
             triangles.Reverse();
-            mesh.triangles = triangles.ToArray();
+
+
+            mesh.triangles = BoostTriangles(triangles, numBoundaryPoints).ToArray();
 
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
@@ -87,6 +76,46 @@ namespace Assets.Scripts.Map
 
 
             this.gameObject.transform.position = new UnityVector3(-xSize / 2, -ySize / 2, 0);
+        }
+
+        private static List<int> BoostTriangles(List<int> originalTriangles, int numBoundaryPoints)
+        {
+
+            List<int> finalTriangles = new List<int>();
+            for (int i = 0; i < originalTriangles.Count; i++)
+            {
+                finalTriangles.Add(originalTriangles[i]);
+            }
+
+            // Back Face Triangles (Offset by numBoundaryPoints and reverse winding order for backface culling)
+            for (int i = 0; i < originalTriangles.Count; i += 3)
+            {
+                finalTriangles.Add(originalTriangles[i + 2] + numBoundaryPoints);
+                finalTriangles.Add(originalTriangles[i + 1] + numBoundaryPoints);
+                finalTriangles.Add(originalTriangles[i] + numBoundaryPoints);
+            }
+
+            // Side Edge Stitching (Connects the front face to the back face)
+            for (int i = 0; i < numBoundaryPoints; i++)
+            {
+                int next = (i + 1) % numBoundaryPoints;
+
+                int iFront = i;
+                int nextFront = next;
+                int iBack = i + numBoundaryPoints;
+                int nextBack = next + numBoundaryPoints;
+
+                // First triangle of the side quad
+                finalTriangles.Add(iFront);
+                finalTriangles.Add(nextFront);
+                finalTriangles.Add(iBack);
+
+                // Second triangle of the side quad
+                finalTriangles.Add(nextFront);
+                finalTriangles.Add(nextBack);
+                finalTriangles.Add(iBack);
+            }
+            return finalTriangles;
         }
 
         private static List<int> GetTriangleList(List<Vector2> boundingPoints)

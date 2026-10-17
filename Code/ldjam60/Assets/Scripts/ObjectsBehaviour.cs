@@ -14,13 +14,6 @@ namespace Assets.Scripts
 
         private float speedMultiplier = 0.001f;
 
-        private Rigidbody rigidbody;
-
-
-        private void Awake()
-        {
-            this.rigidbody = GetComponent<Rigidbody>();
-        }
 
         private void OnTriggerExit(Collider other)
         {
