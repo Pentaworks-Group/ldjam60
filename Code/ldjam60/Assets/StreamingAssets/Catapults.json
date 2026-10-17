@@ -1,16 +1,16 @@
 [
- {
-	"Reference": "Default",
-	"TemplateReference": "Catapult",
-	"FiringStrength": {
-		"Min": 0,
-		"Max": 100
-	},
-	"AvailableProjectiles": [
-		{
-			"Reference": "Stone",
-			"IsReferenced": true
-		}
-	]
- }
+	{
+		"Reference": "Default",
+		"TemplateReference": "Catapult",
+		"PossibleFiringStrength": {
+			"Min": 0,
+			"Max": 100
+		},
+		"AvailableProjectiles": [
+			{
+				"Reference": "Stone",
+				"IsReferenced": true
+			}
+		]
+	}
 ]
