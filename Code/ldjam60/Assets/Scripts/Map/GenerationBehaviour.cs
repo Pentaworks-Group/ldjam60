@@ -1,8 +1,6 @@
 using Assets.Scripts.Core.Definitions;
-using GameFrame.Core.Extensions;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.UI.CanvasScaler;
 using UnityVector2 = UnityEngine.Vector2;
 using UnityVector3 = UnityEngine.Vector3;
 using Vector2 = GameFrame.Core.Math.Vector2;
@@ -34,8 +32,6 @@ namespace Assets.Scripts.Map
             Physics.gravity = new UnityVector3(0, 3 * Physics.gravity.y, 0);
 
 
-            MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-            MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = new Mesh();
 
 
@@ -78,11 +74,13 @@ namespace Assets.Scripts.Map
 
             mesh.uv = uvs;
 
+            var meshFilter = GetComponent<MeshFilter>();
             meshFilter.mesh = mesh;
+            var meshCollider = GetComponent<MeshCollider>();
+            meshCollider.sharedMesh = mesh;
 
-            MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
 
-            this.gameObject.transform.position = new UnityVector3(-xSize / 2, -ySize / 2, -10);
+            this.gameObject.transform.position = new UnityVector3(-xSize / 2, -ySize / 2, 0);
         }
 
         private static List<int> GetTriangleList(List<Vector2> boundingPoints)
