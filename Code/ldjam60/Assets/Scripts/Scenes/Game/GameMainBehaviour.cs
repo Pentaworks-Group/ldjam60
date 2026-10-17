@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 
+using Assets.Scripts.Constants;
 using Assets.Scripts.Core;
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Core.Models.Players;
 
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Assets.Scripts.Scenes.Game
@@ -24,20 +26,33 @@ namespace Assets.Scripts.Scenes.Game
         [SerializeField]
         private Transform objectContainer;
 
+        private InputAction fireAction;
+
         private void Awake()
         {
+            fireAction = InputSystem.actions.FindAction(InputActions.Fire);
+
             Base.Core.Game.ExecuteAfterInstantation(Init);
         }
 
         private void Init()
         {
             LoadTemplates();
-
+                        
             var currentLevel = Base.Core.Game.State.Level;
 
             this.backgroundImage.sprite = GameFrame.Base.Resources.Manager.Sprites.Get(currentLevel.BackgroundReference);
 
             InitWorld(Base.Core.Game.State);
+
+            fireAction.performed += FireAction_performed;
+
+            fireAction.Enable();
+        }
+
+        private void FireAction_performed(InputAction.CallbackContext obj)
+        {
+            Debug.Log("Pew");
         }
 
         private void LoadTemplates()

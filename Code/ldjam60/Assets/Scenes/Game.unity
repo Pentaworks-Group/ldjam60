@@ -658,8 +658,20 @@ PrefabInstance:
       value: Rock
       objectReference: {fileID: 0}
     - target: {fileID: 7560300802487083073, guid: cfe17809271bccd43a041b3e34065c52, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7560300802487083073, guid: cfe17809271bccd43a041b3e34065c52, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7560300802487083073, guid: cfe17809271bccd43a041b3e34065c52, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7560300802487083073, guid: cfe17809271bccd43a041b3e34065c52, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -11.13127
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7560300802487083073, guid: cfe17809271bccd43a041b3e34065c52, type: 3}
       propertyPath: m_LocalPosition.y
@@ -667,7 +679,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7560300802487083073, guid: cfe17809271bccd43a041b3e34065c52, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 72.45285
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7560300802487083073, guid: cfe17809271bccd43a041b3e34065c52, type: 3}
       propertyPath: m_LocalRotation.w
