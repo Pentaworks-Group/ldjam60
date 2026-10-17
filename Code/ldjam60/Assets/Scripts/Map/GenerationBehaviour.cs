@@ -1,7 +1,6 @@
 using Assets.Scripts.Core.Definitions;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityVector2 = UnityEngine.Vector2;
 using UnityVector3 = UnityEngine.Vector3;
 using Vector2 = GameFrame.Core.Math.Vector2;
 
@@ -23,7 +22,7 @@ namespace Assets.Scripts.Map
             Debug.Log("Starting");
             Vector2 size = new(1000, 1000);
 
-            MapDefinition _definition = new MapDefinition()
+            MapDefinition map = new MapDefinition()
             {
                 Size = size,
                 TextureMap = GenerateTestEnvironment(1, size)
@@ -35,19 +34,21 @@ namespace Assets.Scripts.Map
             Mesh mesh = new Mesh();
 
 
-            int xSize = _definition.TextureMap.GetLength(0);
-            int ySize = _definition.TextureMap.GetLength(1);
-
-            Debug.Log(_definition.TextureMap);
-
-            var boundaryPoints = GetBoundingPoints(_definition, 1);
+            int xSize = map.TextureMap.GetLength(0);
+            int ySize = map.TextureMap.GetLength(1);
 
 
+            var boundaryPoints = GetBoundingPoints(map, 1);
             int numBoundaryPoints = boundaryPoints.Count;
 
+            //float minX = boundaryPoints.Min(p => p.X);
+            //float maxX = boundaryPoints.Max(p => p.X);
+            //float minY = boundaryPoints.Min(p => p.Y);
+            //float maxY = boundaryPoints.Max(p => p.Y);
+            //float boundsWidth = maxX - minX;
+            //float boundsHeight = maxY - minY;
 
-
-            UnityVector2[] uvs = new UnityVector2[numBoundaryPoints];
+            //UnityVector2[] uvs = new UnityVector2[numBoundaryPoints];
             UnityVector3[] vertices = new UnityVector3[numBoundaryPoints];
             for (int i = 0; i < numBoundaryPoints; i++)
             {
@@ -56,12 +57,17 @@ namespace Assets.Scripts.Map
 
                 vertices[i] = new Vector3(point.X, flippedY, 0f);
 
-                float u = point.X / xSize;
-                float v = flippedY / ySize;
+                //float u = point.X / xSize;
+                //float v = flippedY / ySize;
+
+                //float u = (point.X - minX) / boundsWidth;
+                //float v = 1f - ((point.Y - minY) / boundsHeight);
+                //uvs[i] = new UnityVector2(u, v);
 
             }
 
             mesh.vertices = vertices;
+            //mesh.uv = uvs;
 
 
             List<int> triangles = GetTriangleList(boundaryPoints);
@@ -70,13 +76,13 @@ namespace Assets.Scripts.Map
 
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
+            mesh.name = "MeshGeneratedByScript";
 
-
-            mesh.uv = uvs;
 
             var meshFilter = GetComponent<MeshFilter>();
-            meshFilter.mesh = mesh;
+            meshFilter.sharedMesh = mesh;
             var meshCollider = GetComponent<MeshCollider>();
+            meshCollider.sharedMesh = null;
             meshCollider.sharedMesh = mesh;
 
 

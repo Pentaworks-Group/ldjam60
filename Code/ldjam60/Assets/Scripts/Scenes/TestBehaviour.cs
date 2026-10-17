@@ -15,6 +15,8 @@ namespace Assets.Scripts.Scenes
         public void SpawnRock()
         {
             var newRock = Instantiate(rockTemplate, objectContainer.transform);
+            var objectBehaviour = newRock.GetComponent<ObjectsBehaviour>();
+            objectBehaviour.Init(100, true, 2);
             newRock.SetActive(true);
         }
 
@@ -22,6 +24,8 @@ namespace Assets.Scripts.Scenes
         public void SpawnCata()
         {
             var newRock = Instantiate(cataTemplate, objectContainer.transform);
+            var objectBehaviour = newRock.GetComponent<ObjectsBehaviour>();
+            objectBehaviour.Init(100, false, 2);
             newRock.SetActive(true);
         }
 
