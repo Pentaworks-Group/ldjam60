@@ -92,10 +92,12 @@ namespace Assets.Scripts.Scenes.Game
 
                     var rigidbody = projectileBehaviour.GetComponent<Rigidbody>();
 
-                    var rotation = Quaternion.Euler(currentPlayer.Catapult.FiringAngle, 0, 0);
-                    var direction = rotation * Vector3.forward;
+                    var rotation = Quaternion.Euler(0f, 0f, 120);
+                    var direction = rotation * Vector3.right;
 
-                    rigidbody.AddForce(direction * currentPlayer.Catapult.FiringStrength, ForceMode.Impulse);
+                    var forcedForce = direction.normalized * currentPlayer.Catapult.FiringStrength;
+
+                    rigidbody.AddForce(forcedForce, ForceMode.Impulse);
 
                     Base.Core.Game.State.Projectiles.Add(projectile);
 
