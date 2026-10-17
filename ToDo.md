@@ -13,7 +13,7 @@
  - 
  
 ## Core:
-- Model
+- Definitions:
  - Level
   - Name (String)
   - BackgroundReference (String)
@@ -26,7 +26,10 @@
   - Name (String)
   - SpriteReference (String)
   - Weight (Double)
-   
+  - Cost (Double)
+  
+- Model:
+  
 ## GamePlay:
  - map rending
  - map file/stucture
