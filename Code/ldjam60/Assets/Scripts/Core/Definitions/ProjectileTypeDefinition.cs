@@ -4,11 +4,12 @@ using GameFrame.Core.Definitions;
 
 namespace Assets.Scripts.Core.Definitions
 {
-    public class ProjectileDefinition : BaseDefinition
+    public class ProjectileTypeDefinition : BaseDefinition
     {
         public String Name { get; set; }
-        public Double? Cost { get; set; }
-        public Double? Weight { get; set; }
+        public Boolean? IsDefault { get; set; }
+        public Decimal? Cost { get; set; }
+        public GameFrame.Core.Math.Range Mass { get; set; }
         public Double? Damage { get; set; }
         public String TemplateReference { get; set; }
     }

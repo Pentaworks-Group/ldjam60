@@ -1,20 +1,21 @@
 [
-	{
-		"Reference": "Default",
-		"TemplateReference": "Catapult",
-		"PossibleFiringStrength": {
-			"Min": 0,
-			"Max": 100
-		},
-		"PossibleFiringAngle": {
-			"Min": 10,
-			"Max": 90
-		},
-		"AvailableProjectiles": [
-			{
-				"Reference": "Stone",
-				"IsReferenced": true
-			}
-		]
-	}
+  {
+    "Reference": "Default",
+    "TemplateReference": "Default",
+    "PossibleFiringStrength": {
+      "Min": 0,
+      "Max": 100
+    },
+    "FiringArc": {
+      "Min": 10,
+      "Max": 90
+    },
+    "AvailableProjectileTypes": [
+      {
+        "Reference": "Stone",
+        "IsReferenced": true,
+        "IsDefault": true
+      }
+    ]
+  }
 ]

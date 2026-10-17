@@ -13,7 +13,7 @@ namespace Assets.Scripts.Core
         private readonly DefinitionCache<Definitions.GameMode> gameModeCache = new DefinitionCache<Definitions.GameMode>();
         private readonly DefinitionCache<Definitions.LevelDefinition> levelCache = new DefinitionCache<Definitions.LevelDefinition>();
         private readonly DefinitionCache<Definitions.CatapultDefinition> catapultCache = new DefinitionCache<Definitions.CatapultDefinition>();
-        private readonly DefinitionCache<Definitions.ProjectileDefinition> projectileCache = new DefinitionCache<Definitions.ProjectileDefinition>();
+        private readonly DefinitionCache<Definitions.ProjectileTypeDefinition> projectileCache = new DefinitionCache<Definitions.ProjectileTypeDefinition>();
 
         private GameMode selectedGameMode;
 
@@ -59,7 +59,7 @@ namespace Assets.Scripts.Core
         protected override IEnumerator LoadDefintions()
         {
             yield return new DefinitionLoader<LevelDefinition>(this.levelCache).LoadDefinitions("Levels.json");
-            yield return new DefinitionLoader<ProjectileDefinition>(this.projectileCache).LoadDefinitions("Projectiles.json");
+            yield return new DefinitionLoader<ProjectileTypeDefinition>(this.projectileCache).LoadDefinitions("ProjectileTypes.json");
             yield return new SimpleReferenceLoader<CatapultDefinition>(this.catapultCache, this.projectileCache).LoadDefinitions("Catapults.json");
             yield return new SimpleReferenceLoader<GameMode>(this.gameModeCache, this.catapultCache, this.levelCache).LoadDefinitions("GameModes.json");
         }

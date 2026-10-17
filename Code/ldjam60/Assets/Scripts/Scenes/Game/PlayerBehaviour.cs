@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Scenes.Game
 {
-    public class PlayerBehvaiour : MonoBehaviour
+    public class PlayerBehaviour : MonoBehaviour
     {
         protected virtual void InnerStart()
         {

@@ -1,21 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Assets.Scripts.Constants;
 using Assets.Scripts.Core;
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Core.Models.Players;
 
+using GameFrame.Core.Extensions;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+
+using FrameVector3 = GameFrame.Core.Math.Vector3;
+using FrameVector4 = GameFrame.Core.Math.Vector4;
 
 namespace Assets.Scripts.Scenes.Game
 {
     public class GameMainBehaviour : MonoBehaviour
     {
-        private readonly Dictionary<String, GameObject> catapultTemplateCache = new Dictionary<string, GameObject>();
-        private readonly Dictionary<String, GameObject> projectileTemplateCache = new Dictionary<string, GameObject>();
+        private readonly Dictionary<String, GameObject> catapultTemplateCache = new Dictionary<String, GameObject>();
+        private readonly Dictionary<String, GameObject> projectileTemplateCache = new Dictionary<String, GameObject>();
+        private readonly Dictionary<Guid, PlayerBehaviour> playerBehaviours = new Dictionary<Guid, PlayerBehaviour>();
 
         [SerializeField]
         private Image backgroundImage;
@@ -38,7 +45,7 @@ namespace Assets.Scripts.Scenes.Game
         private void Init()
         {
             LoadTemplates();
-                        
+
             var currentLevel = Base.Core.Game.State.Level;
 
             this.backgroundImage.sprite = GameFrame.Base.Resources.Manager.Sprites.Get(currentLevel.BackgroundReference);
@@ -52,7 +59,49 @@ namespace Assets.Scripts.Scenes.Game
 
         private void FireAction_performed(InputAction.CallbackContext obj)
         {
-            Debug.Log("Pew");
+            var currentPlayer = Base.Core.Game.State.CurrentPlayer;
+
+            if (currentPlayer != default)
+            {
+                var projectileType = currentPlayer.Catapult.SelectedProjectileType;
+
+                if (projectileType == default)
+                {
+                    projectileType = currentPlayer.Catapult.AvailableProjectileTypes.FirstOrDefault(p => p.IsDefault);
+
+                    if (projectileType == default)
+                    {
+                        projectileType = currentPlayer.Catapult.AvailableProjectileTypes[0];
+                    }
+                }
+
+                if ((projectileType != null) && (playerBehaviours.TryGetValue(currentPlayer.ID, out var playerBehaviour)))
+                {
+                    var renderer = playerBehaviour.GetComponent<Renderer>();
+
+                    var position = new FrameVector3(currentPlayer.Position.X, renderer.bounds.extents.y, 0);
+                    
+                    var projectile = new Projectile()
+                    {
+                        Type = projectileType,
+                        Position = position ,
+                        Force = FrameVector3.Zero, 
+                    };
+
+                    var projectileBehaviour = SpawnProjectile(projectile);
+
+                    var rigidbody = projectileBehaviour.GetComponent<Rigidbody>();
+
+                    var rotation = Quaternion.Euler(currentPlayer.Catapult.FiringAngle, 0, 0);
+                    var direction = rotation * Vector3.forward;
+
+                    rigidbody.AddForce(direction * currentPlayer.Catapult.FiringStrength, ForceMode.Impulse);
+
+                    Base.Core.Game.State.Projectiles.Add(projectile);
+
+                    currentPlayer.Credits -= projectileType.Cost;
+                }
+            }
         }
 
         private void LoadTemplates()
@@ -92,12 +141,14 @@ namespace Assets.Scripts.Scenes.Game
 
         private void SpawnPlayer(Player player)
         {
-            var postion = new UnityEngine.Vector3(player.Position.X, player.Position.Y,0);
+            var postion = new UnityEngine.Vector3(player.Position.X, player.Position.Y, 0);
 
-            var template = GetTemplate(catapultTemplateCache, player.Catapult.Definition.Reference);
+            var template = GetTemplate(catapultTemplateCache, player.Catapult.TemplateReference);
             var spawnedCatapult = SpawnObject(template, objectContainer, player.Name, postion);
 
             var playerBehaviour = SetPlayerBehaviour(player, spawnedCatapult);
+
+            playerBehaviours[player.ID] = playerBehaviour;
 
             spawnedCatapult.SetActive(true);
         }
@@ -110,14 +161,36 @@ namespace Assets.Scripts.Scenes.Game
             }
         }
 
-        private void SpawnProjectile(Projectile projectile)
+        private ProjectileBehaviour SpawnProjectile(Projectile projectile)
         {
+            var startPosition = projectile.Position.ToUnity();
 
+            var template = GetTemplate(projectileTemplateCache, projectile.Type.TemplateReference);
+            var spawnedProjectile = SpawnObject(template, objectContainer, projectile.Type.Name, startPosition);
+
+            var rigidbody = spawnedProjectile.GetComponent<Rigidbody>();
+            var projectileBehaviour = spawnedProjectile.GetComponent<ProjectileBehaviour>();
+
+            rigidbody.mass = projectile.Type.Mass;
+
+            if (projectile.Rotation.HasValue)
+            {
+                rigidbody.rotation = projectile.Rotation.ToUnityQuaternion();
+            }
+
+            if (projectile.Force.HasValue)
+            {
+                rigidbody.linearVelocity = projectile.Force.ToUnity();
+            }
+
+            spawnedProjectile.SetActive(true);
+
+            return projectileBehaviour;
         }
 
-        private PlayerBehvaiour SetPlayerBehaviour(Player player, GameObject catapult)
+        private PlayerBehaviour SetPlayerBehaviour(Player player, GameObject catapult)
         {
-            PlayerBehvaiour playerBehvaiour;
+            PlayerBehaviour playerBehvaiour;
 
             switch (player)
             {

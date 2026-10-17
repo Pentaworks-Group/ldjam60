@@ -1,19 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Assets.Scripts.Core.Definitions;
-
-using GameFrame.Core.Math;
 
 namespace Assets.Scripts.Core.Models
 {
     public class Catapult
     {
-        public CatapultDefinition Definition { get; set; }
-        public Double FiringAngle { get; set; }
-        public Double FiringStrength { get; set; }
+        public String TemplateReference { get; set; }
+        public GameFrame.Core.Math.Range FiringArc { get; set; }
+        public GameFrame.Core.Math.Range PossibleFiringStrength { get; set; }
+        public List<ProjectileType> AvailableProjectileTypes { get; set; } = new List<ProjectileType>();
+        public ProjectileType SelectedProjectileType { get; set; }
+        public Single FiringAngle { get; set; }
+        public Single FiringStrength { get; set; }
     }
 }
