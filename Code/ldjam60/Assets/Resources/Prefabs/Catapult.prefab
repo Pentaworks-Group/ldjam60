@@ -13,13 +13,14 @@ GameObject:
   - component: {fileID: 3345817067680229903}
   - component: {fileID: 7503490800899005823}
   - component: {fileID: 7770424094280056357}
+  - component: {fileID: 7824297405428176710}
   m_Layer: 0
   m_Name: Catapult
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3823551749016263644
 Transform:
   m_ObjectHideFlags: 0
@@ -155,3 +156,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.ObjectsDestructionBehaviour
   outsideCollider: {fileID: 0}
+--- !u!114 &7824297405428176710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2910933957775458895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47eb034429c531b4eab20862929ed1ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Scenes.Game.CatapultBehaviour
