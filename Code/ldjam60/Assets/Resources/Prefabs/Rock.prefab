@@ -13,13 +13,14 @@ GameObject:
   - component: {fileID: 7379688686478973606}
   - component: {fileID: 6203754613915367169}
   - component: {fileID: 1906380797745865145}
+  - component: {fileID: 8878434864352692770}
   m_Layer: 0
   m_Name: Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7560300802487083073
 Transform:
   m_ObjectHideFlags: 0
@@ -155,3 +156,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.ObjectsDestructionBehaviour
   outsideCollider: {fileID: 0}
+--- !u!114 &8878434864352692770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2506968530322485083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18f861aa0c67fc8438cd6621039a781e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Scenes.Game.ProjectileBehaviour
