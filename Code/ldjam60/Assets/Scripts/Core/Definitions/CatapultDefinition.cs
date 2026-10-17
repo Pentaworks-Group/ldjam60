@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 
+using GameFrame.Core.Definitions;
+
 namespace Assets.Scripts.Core.Definitions
 {
-    public class CatapultDefinition
+    public class CatapultDefinition : BaseDefinition
     {
         public String TemplateReference { get; set; }
         public GameFrame.Core.Math.Range FiringStrength { get; set; }
