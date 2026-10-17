@@ -1,6 +1,6 @@
 namespace Assets.Scripts.Scenes.Game
 {
-    public class BotPlayerBehaviour : PlayerBehvaiour
+    public class BotPlayerBehaviour : PlayerBehaviour
     {
     }
 }
