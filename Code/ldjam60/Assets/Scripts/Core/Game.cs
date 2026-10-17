@@ -41,6 +41,7 @@ namespace Assets.Scripts.Core
             yield return new DefinitionLoader<ProjectileDefinition>(this.projectileCache).LoadDefinitions("Projectiles.json");
             yield return new SimpleReferenceLoader<CatapultDefinition>(this.catapultCache, this.projectileCache).LoadDefinitions("Catapults.json");
             yield return new SimpleReferenceLoader<GameMode>(this.gameModeCache, this.levelCache).LoadDefinitions("GameModes.json");
+
             Debug.Log("loaded definitions");
         }
     }
