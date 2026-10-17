@@ -13,23 +13,7 @@
  - 
  
 ## Core:
-- Definitions:
- - Level
-  - Name (String)
-  - BackgroundReference (String)
-  - GroundMap (Map, TBD)
- - Catapult
-  - SpriteRefernce (String)
-  - Firing Strength (Range)
-  - AvailableProjectiles (List<Projectile>)
- - Projectile
-  - Name (String)
-  - SpriteReference (String)
-  - Weight (Double)
-  - Cost (Double)
-  
-- Model:
-  
+ - 
 ## GamePlay:
  - map rending
  - map file/stucture
