@@ -97,7 +97,7 @@ namespace Assets.Scripts.Scenes.Game
 
                 if (projectileType != null)
                 {
-                    var renderer = playerBehaviour.GetComponent<Renderer>();
+                    var renderer = playerBehaviour.GetComponentInChildren<Renderer>();
 
                     var position = new FrameVector3(playerBehaviour.Player.Position.X, renderer.bounds.extents.y + 0.1f, 0f);
 
