@@ -1279,6 +1279,7 @@ MonoBehaviour:
   rockTemplate: {fileID: 2055588748}
   cataTemplate: {fileID: 1995831631}
   objectContainer: {fileID: 1204316150}
+  generationBehaviour: {fileID: 2146407566}
 --- !u!1 &2098837180
 GameObject:
   m_ObjectHideFlags: 0
@@ -1356,6 +1357,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2098837180}
   m_CullTransparentMesh: 1
+--- !u!114 &2146407566 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1627006699783850545, guid: 9b14c6ef319091942b4182734b60ab02, type: 3}
+  m_PrefabInstance: {fileID: 9008151136698256855}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 568bf0b10e25abc40a3b8d78f73a3c4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Map.GenerationBehaviour
 --- !u!1001 &656729876136754153
 PrefabInstance:
   m_ObjectHideFlags: 0
