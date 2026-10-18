@@ -273,18 +273,23 @@ namespace Assets.Scripts.Map
 
             // Random seed: each call produces a different landscape
             float seed = Random.Range(0f, 1000f);
+            float purlinscaleHill = .005f;
+            float purlinscaleBump = .015f;
+            float hillratio = .75f;
+            float heightscale = .9f;
+
 
             for (int x = 0; x < width; x++)
             {
                 //smaller perlinNoise factor == less frequent
-                float primaryHill = Mathf.PerlinNoise((x * 0.003f) + seed, seed) * 0.7f;
-                float gentleBumps = Mathf.PerlinNoise((x * 0.015f) + seed, seed + 100f) * 0.15f;
+                float primaryHill = Mathf.PerlinNoise((x * 0.005f) + seed, seed) * hillratio;
+                float gentleBumps = Mathf.PerlinNoise((x * 0.015f) + seed, seed + 100f)*1-hillratio;
 
                 float noise = primaryHill + gentleBumps;
 
 
-                float columnHeight = noise * height * 0.55f;
-                columnHeight = Mathf.Clamp(columnHeight, 1, height * 0.9f);
+                float columnHeight = noise * height * heightscale;
+                columnHeight = Mathf.Clamp(columnHeight, 1, height * 0.95f);
 
                 // Fill from the bottom up: ground sits at the bottom of the texture
                 for (int y = 0; y < columnHeight; y++)
