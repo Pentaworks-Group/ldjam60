@@ -6,17 +6,23 @@ using System.Threading.Tasks;
 
 using Assets.Scripts.Core.Models;
 
+using TMPro;
+
 using UnityEngine;
 
 namespace Assets.Scripts.Scenes.Game
 {
     public class CatapultBehaviour : MonoBehaviour
     {
-        private Catapult catapult;
+        [SerializeField] TMP_Text nameText;
 
-        public void Init(Catapult catapult)
+        private Player player;
+
+        public void Init(Player player)
         {
-            this.catapult = catapult;
+            this.player = player;
+
+            this.nameText.text = player.Name;
         }
     }
 }

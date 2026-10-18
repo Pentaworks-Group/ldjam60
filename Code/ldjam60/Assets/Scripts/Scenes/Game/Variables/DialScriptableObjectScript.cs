@@ -34,5 +34,13 @@ public class DialScriptableObjectScript : ScriptableObject
     {
         SetValue(Mathf.Lerp(min, max, Mathf.Clamp01(percentage)));
     }
+
+    public void SetValues(Single minValue, Single maxValue, Single value)
+    {
+        min = minValue;
+        max = maxValue;
+
+        SetValue(value);
+    }
 }
 

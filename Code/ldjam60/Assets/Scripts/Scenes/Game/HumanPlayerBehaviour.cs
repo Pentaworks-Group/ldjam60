@@ -22,6 +22,7 @@ namespace Assets.Scripts.Scenes.Game
         private InputAction decreaseStrengthAction;
 
         private Boolean resetAimAngle;
+        private Boolean resetFirePower;
         private IEnumerator aimLeft;
         private IEnumerator aimRight;
 
@@ -39,8 +40,8 @@ namespace Assets.Scripts.Scenes.Game
             aimLeftAction.Hook(onStarted: AimLeftAction_Started, onCancelled: AimLeftAction_Cancelled);
             aimRightAction.Hook(onStarted: AimRightAction_Started, onCancelled: AimRightAction_Cancelled);
 
-            increaseStrengthAction.UnHook(onStarted: IncreasePowerAction_Started, onCancelled: IncreasePowerAction_Cancelled);
-            decreaseStrengthAction.UnHook(onStarted: DecreasePowerAction_Started, onCancelled: DecreasePowerAction_Cancelled);
+            increaseStrengthAction.Hook(onStarted: IncreasePowerAction_Started, onCancelled: IncreasePowerAction_Cancelled);
+            decreaseStrengthAction.Hook(onStarted: DecreasePowerAction_Started, onCancelled: DecreasePowerAction_Cancelled);
         }
 
         public override void DisableInput()
@@ -130,12 +131,13 @@ namespace Assets.Scripts.Scenes.Game
 
         private void IncreasePowerAction_Started(InputAction.CallbackContext context)
         {
-            _ = StartCoroutine(increasePower);
+            _ = StartCoroutine(increasePower);            
         }
 
         private void IncreasePowerAction_Cancelled(InputAction.CallbackContext context)
         {
             StopCoroutine(increasePower);
+            resetFirePower = true;
         }
 
         private void DecreasePowerAction_Started(InputAction.CallbackContext context)
@@ -146,6 +148,7 @@ namespace Assets.Scripts.Scenes.Game
         private void DecreasePowerAction_Cancelled(InputAction.CallbackContext context)
         {
             StopCoroutine(decreasePower);
+            resetFirePower = true;
         }
 
         private IEnumerator ChangeAim(Single angleStep)
@@ -167,7 +170,7 @@ namespace Assets.Scripts.Scenes.Game
 
                 var currentAngle = Player.Catapult.FiringAngle;
 
-                var newAngle = currentAngle - actualAngle;
+                var newAngle = currentAngle + actualAngle;
 
                 newAngle = Mathf.Clamp(newAngle, minValue, maxValue);
 
@@ -179,13 +182,13 @@ namespace Assets.Scripts.Scenes.Game
 
                 elapsedTime += Time.deltaTime;
 
-                if (elapsedTime > 0.5f)
+                if (elapsedTime > 0.25f)
                 {
                     elapsedTime = 0f;
                     actualAngle *= 1.5f;
                 }
 
-                Debug.Log(actualAngle);
+                Debug.Log($"{newAngle}: {actualAngle}");
 
                 yield return new WaitForFixedUpdate();
             }
@@ -193,45 +196,44 @@ namespace Assets.Scripts.Scenes.Game
 
         private IEnumerator ChangePower(Single powerStep)
         {
-            var strenth = Player.Catapult.FiringStrength;
-
             var actualPowerChange = powerStep * Time.deltaTime;
 
-            var minValue = Player.Catapult.PossibleFiringStrength.Min.Value;
-            var maxValue = Player.Catapult.PossibleFiringStrength.Max.Value;
+            var minValue = Player.Catapult.PossibleFiringPower.Min.Value;
+            var maxValue = Player.Catapult.PossibleFiringPower.Max.Value;
+
+            var elapsedTime = 0f;
 
             while (true)
             {
-                strenth -= actualPowerChange;
+                if (resetFirePower)
+                {
+                    actualPowerChange = powerStep * Time.deltaTime;
+                    resetAimAngle = false;
+                }
 
-                var newPower = Mathf.Clamp(strenth, minValue, maxValue);
+                var currentFirePower = Player.Catapult.FiringPower;
 
-                Player.Catapult.FiringStrength = newPower;
-                OnPowerChanged(newPower);
+                var newFirePower = currentFirePower + powerStep;
+
+                newFirePower = Mathf.Clamp(newFirePower, minValue, maxValue);
+
+                if (currentFirePower != newFirePower)
+                {
+                    Player.Catapult.FiringPower = newFirePower;
+                    OnPowerChanged(newFirePower);
+                }
+
+                elapsedTime += Time.deltaTime;
+
+                if (elapsedTime > 0.5f)
+                {
+                    elapsedTime = 0f;
+                    actualPowerChange *= 1.5f;
+                }
+
+                Debug.Log($"{newFirePower}: {actualPowerChange}");
 
                 yield return new WaitForFixedUpdate();
-            }
-        }
-
-        private void AimRightAction_performed(InputAction.CallbackContext obj)
-        {
-            var newAngle = Player.Catapult.FiringAngle + 1;
-
-            if (newAngle < Player.Catapult.FiringArc.Max.Value)
-            {
-                Player.Catapult.FiringAngle = newAngle;
-                OnAngleChanged(newAngle);
-            }
-        }
-
-        private void AimLeftAction_performed(InputAction.CallbackContext obj)
-        {
-            var newAngle = Player.Catapult.FiringAngle - 1;
-
-            if (newAngle > Player.Catapult.FiringArc.Min.Value)
-            {
-                Player.Catapult.FiringAngle = newAngle;
-                OnAngleChanged(newAngle);
             }
         }
     }

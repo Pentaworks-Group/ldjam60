@@ -42,7 +42,7 @@ namespace Assets.Scripts.Scenes.Game
             {
                 if (!isFired)
                 {
-                    if (myRigidbody.linearVelocity.magnitude > 1)
+                    if (myRigidbody.linearVelocity.magnitude > 0.1)
                     {
                         isFired = true;
                     }

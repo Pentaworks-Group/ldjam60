@@ -2,9 +2,9 @@
   {
     "Reference": "Default",
     "TemplateReference": "Default",
-    "PossibleFiringStrength": {
-      "Min": 1,
-      "Max": 20
+    "PossibleFiringPower": {
+      "Min": 0,
+      "Max": 100
     },
     "FiringArc": {
       "Min": -90,

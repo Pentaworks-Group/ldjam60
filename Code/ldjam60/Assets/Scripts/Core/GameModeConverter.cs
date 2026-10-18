@@ -82,10 +82,10 @@ namespace Assets.Scripts.Core
             var catapult = new Catapult()
             {
                 FiringArc = definition.FiringArc,
-                PossibleFiringStrength = definition.PossibleFiringStrength,
+                PossibleFiringPower = definition.PossibleFiringPower,
                 TemplateReference = definition.TemplateReference,
                 FiringAngle = definition.FiringArc.GetRandom(),
-                FiringStrength = definition.PossibleFiringStrength.GetRandom()
+                FiringPower = definition.PossibleFiringPower.GetRandom()
             };
 
             ConvertProjectileTypes(definition.AvailableProjectileTypes, catapult.AvailableProjectileTypes);
