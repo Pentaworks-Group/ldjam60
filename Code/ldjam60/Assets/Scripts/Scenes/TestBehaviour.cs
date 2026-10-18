@@ -30,16 +30,19 @@ namespace Assets.Scripts.Scenes
 
             Renderer cataRenderer = cataTemplate.GetComponent<Renderer>();
             var sizeX = cataRenderer.bounds.size.x;
-            var height = generationBehaviour.CreateFlatSurface(rockTemplate.transform.position.x, sizeX) + cataRenderer.bounds.extents.y + 2;
-            Vector3 spawnPosition = new Vector3(rockTemplate.transform.position.x, height, rockTemplate.transform.position.z);
+            for (int pos = -470; pos < 500; pos = pos + 60)
+            {
+                var height = generationBehaviour.CreateFlatSurface(pos, sizeX + 5) + cataRenderer.bounds.extents.y + 2;
+                Vector3 spawnPosition = new Vector3(pos, height, 0);
 
-            Debug.Log($"spawnPosition: {spawnPosition}");
-            var newRock = Instantiate(cataTemplate, spawnPosition, Quaternion.identity, objectContainer.transform);
+                Debug.Log($"spawnPosition: {spawnPosition}");
+                var newRock = Instantiate(cataTemplate, spawnPosition, Quaternion.identity, objectContainer.transform);
 
-            Debug.Log($"spawnedPosition: {newRock.transform.position}");
-            var objectBehaviour = newRock.GetComponent<ObjectsBehaviour>();
-            objectBehaviour.Init(100, false, 2);
-            newRock.SetActive(true);
+                Debug.Log($"spawnedPosition: {newRock.transform.position}");
+                var objectBehaviour = newRock.GetComponent<ObjectsBehaviour>();
+                objectBehaviour.Init(100, false, 2);
+                newRock.SetActive(true);
+            }
         }
 
     }
