@@ -34,9 +34,6 @@ namespace Assets.Scripts.Map
             Physics.gravity = new UnityVector3(0, 3 * Physics.gravity.y, 0);
 
 
-            Mesh mesh = new Mesh();
-
-
             int xSize = map.TextureMap.GetLength(0);
             int ySize = map.TextureMap.GetLength(1);
 
@@ -44,33 +41,26 @@ namespace Assets.Scripts.Map
             var boundaryPoints = GetBoundingPoints(map, 1);
             int numBoundaryPoints = boundaryPoints.Count;
 
-            UnityVector3[] vertices = new UnityVector3[numBoundaryPoints * 2];
-            for (int i = 0; i < numBoundaryPoints; i++)
+
+            List<UnityVector3> vertices = new List<UnityVector3>();
+            List<int> triangles = new List<int>();
+
+            int surfaceEnd = xSize;
+
+            foreach (var p in boundaryPoints)
             {
-                Vector2 point = boundaryPoints[i];
-                //float flippedY = ySize - point.Y;
-
-
-                //vertices[i] = new UnityVector3(point.X, flippedY, -5f);
-                //vertices[i + numBoundaryPoints] = new UnityVector3(point.X, flippedY, 5f);
-                vertices[i] = new UnityVector3(point.X, point.Y, -5f);
-                vertices[i + numBoundaryPoints] = new UnityVector3(point.X, point.Y, 5f);
-
-
+                vertices.Add(new UnityVector3(p.X, p.Y, 0));
             }
-
-            mesh.vertices = vertices;
-
-
-            List<int> triangles = GetTriangleList(boundaryPoints);
-            triangles.Reverse();
+            triangles.AddRange(GetTriangleList(boundaryPoints));
 
 
-            mesh.triangles = BoostTriangles(triangles, numBoundaryPoints).ToArray();
+            Mesh mesh = new Mesh();
+            mesh.SetVertices(vertices);
+            mesh.SetTriangles(triangles, 0);
 
+            mesh.name = "MeshGeneratedByScript";
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
-            mesh.name = "MeshGeneratedByScript";
 
 
             var meshFilter = GetComponent<MeshFilter>();
