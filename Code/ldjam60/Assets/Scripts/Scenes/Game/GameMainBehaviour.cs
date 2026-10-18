@@ -116,6 +116,8 @@ namespace Assets.Scripts.Scenes.Game
 
                     var rigidbody = projectileBehaviour.GetComponent<Rigidbody>();
 
+                    Debug.Log($"Firing at angle: {playerBehaviour.Player.Catapult.FiringAngle}!");
+
                     var rotation = Quaternion.Euler(0f, 0f, playerBehaviour.Player.Catapult.FiringAngle);
                     var direction = rotation * Vector3.right;
 
@@ -142,6 +144,9 @@ namespace Assets.Scripts.Scenes.Game
             if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var behaviour))
             {
                 behaviour.DisableInput();
+
+                behaviour.AngleChanged -= PlayerBehaviour_AngleChanged;
+                behaviour.PowerChanged -= PlayerBehaviour_PowerChanged;
             }
 
             var nextPlayer = default(Player);
@@ -181,15 +186,35 @@ namespace Assets.Scripts.Scenes.Game
 
             gameState.CurrentPlayer = nextPlayer;
 
+            SetPlayerValues(nextPlayer);
+
             if (nextPlayer.IsHuman)
             {
                 EnableInput();
 
                 if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var nextPlayerBehaviour))
                 {
+                    nextPlayerBehaviour.AngleChanged += PlayerBehaviour_AngleChanged;
+                    nextPlayerBehaviour.PowerChanged += PlayerBehaviour_PowerChanged;
                     nextPlayerBehaviour.EnableInput();
                 }
-            }
+            }            
+        }
+
+        private void SetPlayerValues(Player player)
+        {
+            //angleDial.SetValues(player.Catapult.FiringArc.Min.Value, player.Catapult.FiringArc.Max.Value, player.Catapult.FiringAngle);
+            angleDial.SetValue(player.Catapult.FiringAngle);
+        }
+
+        private void PlayerBehaviour_AngleChanged(PlayerBehaviour behaviour, Single value)
+        {
+            angleDial.SetValue(value);
+        }
+
+        private void PlayerBehaviour_PowerChanged(PlayerBehaviour behaviour, Single value)
+        {
+            strengthDial.SetValue(value);
         }
 
         private void EnableInput()

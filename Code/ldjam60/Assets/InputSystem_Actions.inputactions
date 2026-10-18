@@ -16,7 +16,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AImUp",
+                    "name": "AimLeft",
                     "type": "Button",
                     "id": "49ff74ec-0b5b-4704-b503-45342588a35b",
                     "expectedControlType": "",
@@ -25,9 +25,27 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AimDown",
+                    "name": "IncreaseStrength",
+                    "type": "Button",
+                    "id": "40c7933d-3ef4-48cb-91b9-b422b8e68a49",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AimRight",
                     "type": "Button",
                     "id": "bfad4d19-e818-43ce-844c-8e098676808c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DecreaseStrength",
+                    "type": "Button",
+                    "id": "f6d8a4f4-d276-40bf-a21c-e2bfc0978bac",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -60,22 +78,44 @@
                 {
                     "name": "",
                     "id": "513d1c35-d8d9-40a2-9bcd-65b3b3bfcc5c",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "AimLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "98daf429-df4a-4be3-8edf-38c92322c317",
                     "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "AImUp",
+                    "action": "IncreaseStrength",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "65f2832c-a2c5-498e-b61c-822a6cf87633",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "AimRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "074e1bb7-e8e4-457e-ad10-0d43e18a045f",
                     "path": "<Keyboard>/downArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "AimDown",
+                    "action": "DecreaseStrength",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

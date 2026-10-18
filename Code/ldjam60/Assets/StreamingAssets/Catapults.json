@@ -7,7 +7,7 @@
       "Max": 20
     },
     "FiringArc": {
-      "Min": 10,
+      "Min": -90,
       "Max": 90
     },
     "AvailableProjectileTypes": [
