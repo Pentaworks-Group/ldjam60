@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Assets.Scripts.Constants;
 using Assets.Scripts.Core;
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Core.Models.Players;
@@ -10,11 +9,9 @@ using Assets.Scripts.Core.Models.Players;
 using GameFrame.Core.Extensions;
 
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 using FrameVector3 = GameFrame.Core.Math.Vector3;
-using FrameVector4 = GameFrame.Core.Math.Vector4;
 
 namespace Assets.Scripts.Scenes.Game
 {
@@ -33,11 +30,8 @@ namespace Assets.Scripts.Scenes.Game
         [SerializeField]
         private Transform objectContainer;
 
-        private InputAction fireAction;
-
         private void Awake()
         {
-            fireAction = InputSystem.actions.FindAction(InputActions.Fire);
 
             Base.Core.Game.ExecuteAfterInstantation(Init);
         }
@@ -51,58 +45,103 @@ namespace Assets.Scripts.Scenes.Game
             this.backgroundImage.sprite = GameFrame.Base.Resources.Manager.Sprites.Get(currentLevel.BackgroundReference);
 
             InitWorld(Base.Core.Game.State);
-
-            fireAction.performed += FireAction_performed;
-
-            fireAction.Enable();
         }
 
-        private void FireAction_performed(InputAction.CallbackContext obj)
+        private void OnShotFired(PlayerBehaviour playerBehaviour)
         {
-            var currentPlayer = Base.Core.Game.State.CurrentPlayer;
-
-            if (currentPlayer != default)
+            if (playerBehaviour != default)
             {
-                var projectileType = currentPlayer.Catapult.SelectedProjectileType;
+                var projectileType = playerBehaviour.Player.Catapult.SelectedProjectileType;
 
                 if (projectileType == default)
                 {
-                    projectileType = currentPlayer.Catapult.AvailableProjectileTypes.FirstOrDefault(p => p.IsDefault);
+                    projectileType = playerBehaviour.Player.Catapult.AvailableProjectileTypes.FirstOrDefault(p => p.IsDefault);
 
                     if (projectileType == default)
                     {
-                        projectileType = currentPlayer.Catapult.AvailableProjectileTypes[0];
+                        projectileType = playerBehaviour.Player.Catapult.AvailableProjectileTypes[0];
                     }
                 }
 
-                if ((projectileType != null) && (playerBehaviours.TryGetValue(currentPlayer.ID, out var playerBehaviour)))
+                if (projectileType != null)
                 {
                     var renderer = playerBehaviour.GetComponent<Renderer>();
 
-                    var position = new FrameVector3(currentPlayer.Position.X, renderer.bounds.extents.y, 0);
-                    
+                    var position = new FrameVector3(playerBehaviour.Player.Position.X, renderer.bounds.extents.y + 0.1f, 0f);
+
                     var projectile = new Projectile()
                     {
                         Type = projectileType,
-                        Position = position ,
-                        Force = FrameVector3.Zero, 
+                        Position = position,
+                        Force = FrameVector3.Zero,
                     };
 
                     var projectileBehaviour = SpawnProjectile(projectile);
 
                     var rigidbody = projectileBehaviour.GetComponent<Rigidbody>();
 
-                    var rotation = Quaternion.Euler(0f, 0f, 120);
+                    var rotation = Quaternion.Euler(0f, 0f, playerBehaviour.Player.Catapult.FiringAngle);
                     var direction = rotation * Vector3.right;
 
-                    var forcedForce = direction.normalized * currentPlayer.Catapult.FiringStrength;
+                    var force = direction.normalized * playerBehaviour.Player.Catapult.FiringStrength;
 
-                    rigidbody.AddForce(forcedForce, ForceMode.Impulse);
+                    rigidbody.AddForce(force, ForceMode.Impulse);
 
                     Base.Core.Game.State.Projectiles.Add(projectile);
 
-                    currentPlayer.Credits -= projectileType.Cost;
+                    playerBehaviour.Player.Credits -= projectileType.Cost;
+
+                    playerBehaviour.DisableInput();
                 }
+            }
+        }
+
+        private void MoveToNextPlayer()
+        {
+            var gameState = Base.Core.Game.State;
+
+            if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var behaviour))
+            {
+                behaviour.DisableInput();
+            }
+
+            var nextPlayer = default(Player);
+
+            var availablePlayers = gameState.Players.Where(p => !p.IsDestroyed).ToList();
+
+            if (availablePlayers.Count <= 1)
+            {
+                // Game Over!
+            }
+            else
+            {
+                var currentPlayer = gameState.CurrentPlayer;
+                var currentIndex = availablePlayers.IndexOf(currentPlayer);
+                var startIndex = currentIndex;
+
+                while (nextPlayer == default)
+                {
+                    currentIndex++;
+
+                    if (startIndex == currentIndex)
+                    {
+                        // Sum Ting wong!
+                    }
+
+                    if (currentIndex >= availablePlayers.Count)
+                    {
+                        currentIndex = 0;
+                    }
+
+                    nextPlayer = availablePlayers[currentIndex];
+                }
+            }
+
+            gameState.CurrentPlayer = nextPlayer;
+
+            if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var nextPlayerBehaviour))
+            {
+                nextPlayerBehaviour.EnableInput();
             }
         }
 
@@ -130,6 +169,11 @@ namespace Assets.Scripts.Scenes.Game
             if (gameState.CurrentPlayer == default)
             {
                 gameState.CurrentPlayer = gameState.Players[0];
+
+                if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var playerBehaviour))
+                {
+                    playerBehaviour.EnableInput();
+                }
             }
         }
 
@@ -145,8 +189,8 @@ namespace Assets.Scripts.Scenes.Game
         {
             var postion = new UnityEngine.Vector3(player.Position.X, player.Position.Y, 0);
 
-            var template = GetTemplate(catapultTemplateCache, player.Catapult.TemplateReference);
-            var spawnedCatapult = SpawnObject(template, objectContainer, player.Name, postion);
+            var catapultTemplate = GetTemplate(catapultTemplateCache, player.Catapult.TemplateReference);
+            var spawnedCatapult = SpawnObject(catapultTemplate, objectContainer, player.Name, postion);
 
             var playerBehaviour = SetPlayerBehaviour(player, spawnedCatapult);
 
@@ -192,16 +236,16 @@ namespace Assets.Scripts.Scenes.Game
 
         private PlayerBehaviour SetPlayerBehaviour(Player player, GameObject catapult)
         {
-            PlayerBehaviour playerBehvaiour;
+            PlayerBehaviour playerBehaviour;
 
             switch (player)
             {
                 case HumanPlayer:
-                    playerBehvaiour = catapult.AddComponent<HumanPlayerBehaviour>();
+                    playerBehaviour = catapult.AddComponent<HumanPlayerBehaviour>();
                     break;
 
                 case BotPlayer:
-                    playerBehvaiour = catapult.AddComponent<BotPlayerBehaviour>();
+                    playerBehaviour = catapult.AddComponent<BotPlayerBehaviour>();
                     break;
 
                 default:
@@ -209,7 +253,10 @@ namespace Assets.Scripts.Scenes.Game
                     throw new NotSupportedException($"Unsupported Player type '{player.GetType().FullName}'!");
             }
 
-            return playerBehvaiour;
+            playerBehaviour.Init(player);
+            playerBehaviour.ShotFired.AddListener(OnShotFired);
+
+            return playerBehaviour;
         }
 
         private GameObject GetTemplate(Dictionary<String, GameObject> templateCache, String templateName)
@@ -227,7 +274,25 @@ namespace Assets.Scripts.Scenes.Game
             var newGameObject = Instantiate(template, position, template.transform.rotation, targetContainer);
             newGameObject.name = name;
 
+            if (newGameObject.TryGetComponent<ObjectsBehaviour>(out var objectBehaviour))
+            {
+                objectBehaviour.ObjectDestroyed.AddListener(OnObjectDestroyed);
+            }
+
             return newGameObject;
+        }
+
+        private void OnObjectDestroyed(GameObject destroyedGameObject)
+        {
+            if (destroyedGameObject.TryGetComponent<PlayerBehaviour>(out var playerBehaviour))
+            {
+                this.playerBehaviours.Remove(playerBehaviour.Player.ID);
+            }
+
+            if (destroyedGameObject.TryGetComponent<ProjectileBehaviour>(out var projectileBehaviour))
+            {
+                MoveToNextPlayer();
+            }
         }
     }
 }

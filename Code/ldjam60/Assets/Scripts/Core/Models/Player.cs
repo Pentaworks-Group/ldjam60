@@ -12,5 +12,6 @@ namespace Assets.Scripts.Core.Models
         public Catapult Catapult { get; set; }
         public Decimal Credits { get; set; }
         public Double Health { get; set; }
+        public Boolean IsDestroyed { get; set; }
     }
 }

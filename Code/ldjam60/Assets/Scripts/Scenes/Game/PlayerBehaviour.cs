@@ -1,9 +1,37 @@
+using Assets.Scripts.Core.Models;
+
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets.Scripts.Scenes.Game
 {
-    public class PlayerBehaviour : MonoBehaviour
+    public abstract class PlayerBehaviour : MonoBehaviour
     {
+        public UnityEvent<PlayerBehaviour> ShotFired = new UnityEvent<PlayerBehaviour>();
+
+        public abstract Player Player { get; }
+
+        public void Init(Player player)
+        {
+            InnerInit(player);
+
+        }
+
+        public virtual void EnableInput()
+        {
+        }
+
+        public virtual void DisableInput()
+        {
+        }
+
+        protected abstract void InnerInit(Player player);
+
+        protected virtual void InnerAwake()
+        {
+
+        }
+
         protected virtual void InnerStart()
         {
 
@@ -14,6 +42,11 @@ namespace Assets.Scripts.Scenes.Game
 
         }
 
+        private void Awake()
+        {
+            InnerAwake();
+        }
+
         private void Start()
         {
             InnerStart();
@@ -22,6 +55,6 @@ namespace Assets.Scripts.Scenes.Game
         private void Update()
         {
             InnerUpdate();
-        }   
+        }
     }
 }
