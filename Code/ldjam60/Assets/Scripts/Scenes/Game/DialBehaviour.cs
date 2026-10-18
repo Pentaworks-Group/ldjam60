@@ -34,12 +34,12 @@ namespace Assets.Scripts.Scenes.Game
                 variable.OnValueChanged -= UpdateUI;
         }
 
-        public void OnDialChanged(float percentage)
+        public void ChangeDial(float percentage)
         {
             if (variable == null)
                 return;
 
-            variable.SetPercentage(percentage);
+            variable.SetPercentage(variable.Percentage + percentage);
         }
 
         public void Increase()

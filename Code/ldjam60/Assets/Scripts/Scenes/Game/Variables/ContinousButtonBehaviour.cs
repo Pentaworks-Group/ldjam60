@@ -12,7 +12,7 @@ namespace Assets.Scripts.Scenes.Game.Variables
         [SerializeField]
         private ButtonClickedEvent onClick;
 
-        bool pressed;
+        private bool pressed;
 
         public void OnPointerDown(PointerEventData eventdata)
         {
@@ -26,7 +26,7 @@ namespace Assets.Scripts.Scenes.Game.Variables
             pressed = false;
         }
 
-        IEnumerator Repeat()
+        private IEnumerator Repeat()
         {
             while (pressed)
             {
