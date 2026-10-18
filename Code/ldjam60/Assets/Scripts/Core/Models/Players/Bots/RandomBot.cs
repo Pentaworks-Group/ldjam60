@@ -11,7 +11,7 @@ namespace Assets.Scripts.Core.Models.Players.Bots
              this.Target = Base.Core.Game.State.Players.Where(p => p != this && !p.IsDestroyed).ToList().GetRandomEntry();
         }
 
-        public override void CalculateValues(out System.Single targetAngle, out System.Single targetPower)
+        public override void CalculateAngleAndPower(out System.Single targetAngle, out System.Single targetPower)
         {
             targetAngle = UnityEngine.Random.Range(this.Catapult.FiringArc.Min.Value, this.Catapult.FiringArc.Max.Value);
             targetPower = UnityEngine.Random.Range(this.Catapult.PossibleFiringPower.Min.Value, this.Catapult.PossibleFiringPower.Max.Value);

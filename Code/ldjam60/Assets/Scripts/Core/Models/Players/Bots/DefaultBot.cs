@@ -16,7 +16,7 @@ namespace Assets.Scripts.Core.Models.Players.Bots
             }
         }
 
-        public override void CalculateValues(out System.Single targetAngle, out System.Single targetPower)
+        public override void CalculateAngleAndPower(out System.Single targetAngle, out System.Single targetPower)
         {
             var targetPosition = this.Target.Position;
 

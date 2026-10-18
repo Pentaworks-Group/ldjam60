@@ -1,11 +1,8 @@
 using System;
 using System.Collections;
-using System.Linq;
 
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Core.Models.Players;
-
-using GameFrame.Core.Extensions;
 
 using UnityEngine;
 
@@ -52,8 +49,8 @@ namespace Assets.Scripts.Scenes.Game
 
         protected virtual IEnumerator SelectTarget()
         {
-            this.botPlayer.SelectTarget();                     
-            
+            this.botPlayer.SelectTarget();
+
             yield return null;
         }
 
@@ -70,7 +67,7 @@ namespace Assets.Scripts.Scenes.Game
 
                 currentValue = Mathf.Lerp(currentValue, targetValue, percentageComplete);
 
-                onUpdate(currentValue);                
+                onUpdate(currentValue);
 
                 yield return null;
             }
@@ -78,15 +75,14 @@ namespace Assets.Scripts.Scenes.Game
 
         protected virtual IEnumerator AimAtTarget()
         {
-            this.botPlayer.CalculateValues(out var targetAngle, out var targetPower);
-            //var targetAngle = UnityEngine.Random.Range(this.Player.Catapult.FiringArc.Min.Value, this.Player.Catapult.FiringArc.Max.Value);
-            //var targetPower = UnityEngine.Random.Range(this.Player.Catapult.PossibleFiringPower.Min.Value, this.Player.Catapult.PossibleFiringPower.Max.Value); 
+            this.botPlayer.CalculateAngleAndPower(out var targetAngle, out var targetPower);
 
             var currentAngle = this.botPlayer.Catapult.FiringAngle;
 
             if (!Mathf.Approximately(currentAngle, targetAngle))
             {
-                yield return Lerp(currentAngle, targetAngle, 2f, (newValue) => {
+                yield return Lerp(currentAngle, targetAngle, 2f, (newValue) =>
+                {
                     this.botPlayer.Catapult.FiringAngle = newValue;
                     OnAngleChanged(newValue);
                 });
@@ -96,7 +92,8 @@ namespace Assets.Scripts.Scenes.Game
 
             if (!Mathf.Approximately(currentPower, targetPower))
             {
-                yield return Lerp(currentPower, targetPower, 2f, (newValue) => {
+                yield return Lerp(currentPower, targetPower, 2f, (newValue) =>
+                {
                     this.botPlayer.Catapult.FiringPower = newValue;
                     OnPowerChanged(newValue);
                 });

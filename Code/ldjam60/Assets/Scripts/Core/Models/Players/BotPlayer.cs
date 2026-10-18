@@ -9,6 +9,6 @@ namespace Assets.Scripts.Core.Models.Players
         public Player Target { get; set; }
 
         public abstract void SelectTarget();
-        public abstract void CalculateValues(out Single targetAngle, out Single targetPower);
+        public abstract void CalculateAngleAndPower(out Single targetAngle, out Single targetPower);
     }
 }
