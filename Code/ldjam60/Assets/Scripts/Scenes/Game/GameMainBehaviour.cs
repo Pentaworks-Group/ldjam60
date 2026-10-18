@@ -41,9 +41,6 @@ namespace Assets.Scripts.Scenes.Game
 
         public void OnQuitClicked()
         {
-
-
-
             Base.Core.Game.Stop();
             Base.Core.Game.ChangeScene(Constants.Scenes.MainMenu);
         }
@@ -132,8 +129,6 @@ namespace Assets.Scripts.Scenes.Game
 
                     DisableInput();
                     playerBehaviour.DisableInput();
-
-                    projectile.IsFired = true;
                 }
             }
         }
@@ -300,7 +295,7 @@ namespace Assets.Scripts.Scenes.Game
             var objectBehaviour = spawnedProjectile.GetComponent<ObjectsBehaviour>();
 
             projectileBehaviour.Init(projectile);
-            projectileBehaviour.ProjectileStopped += ProjectileBehaviour_ProjectileStopped;
+            projectileBehaviour.MoveFinished += ProjectileBehaviour_MoveFinished;
             objectBehaviour.Init(1f, false, projectile.Type.Damage);
 
             rigidbody.mass = projectile.Type.Mass;
@@ -320,9 +315,9 @@ namespace Assets.Scripts.Scenes.Game
             return projectileBehaviour;
         }
 
-        private void ProjectileBehaviour_ProjectileStopped(ProjectileBehaviour behaviour)
+        private void ProjectileBehaviour_MoveFinished(ProjectileBehaviour behaviour)
         {
-            behaviour.ProjectileStopped -= ProjectileBehaviour_ProjectileStopped;
+            behaviour.MoveFinished -= ProjectileBehaviour_MoveFinished;
 
             MoveToNextPlayer();
         }
@@ -384,13 +379,13 @@ namespace Assets.Scripts.Scenes.Game
 
                 if (this.playerBehaviours.Count == 1)
                 {
-                    ShowGameOver(this.playerBehaviours.Values.First().Player);                    
+                    ShowGameOver(this.playerBehaviours.Values.First().Player);
                 }
             }
 
             if (destroyedGameObject.TryGetComponent<ProjectileBehaviour>(out var projectileBehaviour))
             {
-                MoveToNextPlayer();
+                Base.Core.Game.State.Projectiles.Remove(projectileBehaviour.Projectile);
             }
         }
 
