@@ -119,12 +119,9 @@ namespace Assets.Scripts.Map
             var renderer = GetComponent<Renderer>();
             var sizeX = renderer.bounds.size.x;
             this.relativeMapWidht = currentMap.Size.X / sizeX;
-            Debug.Log($"sizeX: {sizeX}, currentMap.Size.X:{currentMap.Size.X}, relativeMapWidht:{relativeMapWidht}");
 
 
             this.relativeMapHeight = (currentMap.Size.Y / currentMap.Size.X) * relativeMapWidht;
-
-            Debug.Log($"currentMap.Size.Y:{currentMap.Size.Y}, relativeMapHeight:{relativeMapHeight}");
         }
 
         private void RebuildMesh()
