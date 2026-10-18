@@ -1,7 +1,7 @@
 using Assets.Scripts.Map;
 using UnityEngine;
 
-namespace Assets.Scripts.Scenes
+namespace Assets.Scripts.Scenes.MapTest
 {
 	public class TestBehaviour : MonoBehaviour
     {

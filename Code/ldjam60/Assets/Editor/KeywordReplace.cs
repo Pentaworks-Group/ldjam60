@@ -38,6 +38,12 @@ public class KeywordReplace : UnityEditor.AssetModificationProcessor
         }
 
         string originalFilePath = AssetDatabase.GetAssetPathFromTextMetaFilePath(path);
+        EditorApplication.delayCall += () =>
+    {
+        if (!File.Exists(originalFilePath))
+        {
+            return;
+        }
         string file = File.ReadAllText(originalFilePath);
 
         var fullNamespace = originalFilePath;
@@ -45,7 +51,7 @@ public class KeywordReplace : UnityEditor.AssetModificationProcessor
         fullNamespace = fullNamespace.Substring(0, fullNamespace.LastIndexOf("/"));
         fullNamespace = fullNamespace.Replace('/', '.');
 
-        Debug.Log(fullNamespace);
+        //Debug.Log(fullNamespace);
 
         //change whatever you want (you can add stuff below, just be sure to add the tags in the script template too!)
         file = file.Replace("#PENTANAMESPACE#", fullNamespace);
@@ -53,6 +59,7 @@ public class KeywordReplace : UnityEditor.AssetModificationProcessor
         //Write the changes in the new script
         File.WriteAllText(originalFilePath, file);
         AssetDatabase.Refresh();
+    };
     }
 
     //public static void OnWillCreateAsset(string path)
