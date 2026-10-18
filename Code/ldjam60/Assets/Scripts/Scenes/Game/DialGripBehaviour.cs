@@ -18,7 +18,7 @@ namespace Assets.Scripts.Scenes.Game
 
             float totalMovement = xMovement + yMovement;
 
-            dialBehaviour.ChangeDial(-totalMovement);
+            dialBehaviour.ChangeDial(totalMovement);
         }
     }
 }

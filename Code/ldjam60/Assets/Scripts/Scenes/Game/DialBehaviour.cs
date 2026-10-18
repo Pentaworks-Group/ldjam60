@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Scenes.Game
 {
@@ -12,6 +14,9 @@ namespace Assets.Scripts.Scenes.Game
 
         [SerializeField]
         private Transform additionalTransform;
+
+        [SerializeField]
+        private Image additionalColoring;
 
         [Tooltip("Click Sensitivity, changes percentage")]
         [SerializeField]
@@ -59,6 +64,14 @@ namespace Assets.Scripts.Scenes.Game
         {
             handleTransform.rotation = Quaternion.Euler(0, 0, 90 - variable.Percentage * 180);
             additionalTransform.rotation = Quaternion.Euler(0, 0, 90 - (variable.Percentage / 8) * 180);
+            additionalColoring.color = GetColorByPercentage(variable.Percentage);
+        }
+        private Color GetColorByPercentage(float percentage)
+        {
+
+            Color color = Color.Lerp(Color.green, Color.red, percentage);
+            color.a = 0.39215686f; //100f / 255f
+            return color;
         }
 
         public float GetPercentage()

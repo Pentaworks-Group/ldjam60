@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b2e8e52dda281f947b26756c4e941fde, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5ffe53a4954a88641be314fdf3707b6d, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -441,6 +441,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7687436427514746174, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d828c87a54867164a95c2b182c626e15, type: 3}
+    - target: {fileID: 7687436427514746174, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
+      propertyPath: m_Color.a
+      value: 0.39215687
+      objectReference: {fileID: 0}
+    - target: {fileID: 7687436427514746174, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7687436427514746174, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7687436427514746174, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7899455426478501222, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -471,10 +491,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5124401143605082823}
     m_Modifications:
+    - target: {fileID: 1382794877508283881, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2119926301808130117, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
       propertyPath: variable
       value: 
       objectReference: {fileID: 11400000, guid: 1950ae55e642b254799b53afdcd8a8ea, type: 2}
+    - target: {fileID: 3910175826106652484, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f97374f0db12a714f8d40950b8c1ac37, type: 3}
     - target: {fileID: 4435964569309926282, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
       propertyPath: m_Pivot.x
       value: 1
@@ -558,7 +586,7 @@ PrefabInstance:
     - target: {fileID: 7899455426478501222, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 892e477a947597942b8b34b3d6a8d463, type: 3}
+      objectReference: {fileID: 21300000, guid: b5ef06abf6fd0984d8ef7dbc0ae88adb, type: 3}
     - target: {fileID: 8810414723387248005, guid: 8e15e8a24ff04424982a2d42f1c79230, type: 3}
       propertyPath: m_Name
       value: AngleDial
