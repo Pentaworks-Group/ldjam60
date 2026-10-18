@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Core.Definitions;
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Core.Models.Players;
+using Assets.Scripts.Core.Models.Players.Bots;
 
 using GameFrame.Core.Extensions;
 
@@ -50,29 +51,53 @@ namespace Assets.Scripts.Core
 
             var playerCatapult = gameMode.AvailableCatapults.GetRandomEntry();
 
-            var humanPlayer = new HumanPlayer()
+            //var humanPlayer = new HumanPlayer()
+            //{
+            //    ID = Guid.NewGuid(),
+            //    Name = "Player 1",
+            //    Credits = 100000m,
+            //    Catapult = ConvertCatapult(playerCatapult),
+            //    Health = 100,
+            //    Position = new GameFrame.Core.Math.Vector2(-3, 0)
+            //};
+
+            //players.Add(humanPlayer);
+
+            //var humanPlayer2 = new HumanPlayer()
+            //{
+            //    ID = Guid.NewGuid(),
+            //    Name = "Player 2",
+            //    Credits = 100000m,
+            //    Catapult = ConvertCatapult(playerCatapult),
+            //    Health = 100,
+            //    Position = new GameFrame.Core.Math.Vector2(3, 0)
+            //};
+
+            //players.Add(humanPlayer2);
+
+            var defaultBot = new DefaultBot()
             {
                 ID = Guid.NewGuid(),
-                Name = "Player 1",
+                Name = "Karl Heinz",
                 Credits = 100000m,
                 Catapult = ConvertCatapult(playerCatapult),
                 Health = 100,
-                Position = new GameFrame.Core.Math.Vector2(-3, 0)
+                Position = new GameFrame.Core.Math.Vector2(0, 1.5f)
             };
 
-            players.Add(humanPlayer);
+            players.Add(defaultBot);
 
-            var humanPlayer2 = new HumanPlayer()
+            var defaultBot2 = new RandomBot()
             {
                 ID = Guid.NewGuid(),
-                Name = "Player 2",
+                Name = "Klaus Dieter",
                 Credits = 100000m,
                 Catapult = ConvertCatapult(playerCatapult),
                 Health = 100,
-                Position = new GameFrame.Core.Math.Vector2(3, 0)
+                Position = new GameFrame.Core.Math.Vector2(-1.5f, 0)
             };
 
-            players.Add(humanPlayer2);
+            players.Add(defaultBot2);
 
             return players;
         }

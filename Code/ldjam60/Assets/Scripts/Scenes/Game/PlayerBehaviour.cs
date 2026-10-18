@@ -12,6 +12,9 @@ namespace Assets.Scripts.Scenes.Game
         public UnityEvent<PlayerBehaviour> ShotFired = new UnityEvent<PlayerBehaviour>();
         public event Action<PlayerBehaviour, Single> AngleChanged;
         public event Action<PlayerBehaviour, Single> PowerChanged;
+        
+        private Boolean isActive;
+        public Boolean IsActive => isActive;
 
         public abstract Player Player { get; }
 
@@ -19,34 +22,43 @@ namespace Assets.Scripts.Scenes.Game
         {
             InnerInit(player);
         }
-
-        public virtual void EnableInput()
+                
+        public void Activate()
         {
+            OnActivate();
+            this.isActive = true;
         }
-
-        public virtual void DisableInput()
+                
+        public void Deactivate()
         {
+            OnDeactivate();
+            this.isActive = false;
         }
 
         protected abstract void InnerInit(Player player);
 
+        protected virtual void OnActivate()
+        {
+        }
+
+        protected virtual void OnDeactivate()
+        {
+        }
+
         protected virtual void InnerAwake()
         {
-
         }
 
         protected virtual void InnerStart()
         {
-
         }
+
         protected virtual void InnerOnDestroy()
         {
-
         }
 
         protected virtual void InnerUpdate()
         {
-
         }
 
         protected void OnAngleChanged(Single angle)
