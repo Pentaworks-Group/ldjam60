@@ -5,7 +5,7 @@ namespace Assets.Scripts.Core.Definitions
 {
     public class MapDefinition : BaseDefinition
     {
-        public Vector2 Size { get; set; }
+        public Vector2Int Size { get; set; }
         public int[,] TextureMap { get; set; } 
     }
 }

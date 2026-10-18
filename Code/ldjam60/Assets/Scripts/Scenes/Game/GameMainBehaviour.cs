@@ -15,7 +15,6 @@ using FrameVector3 = GameFrame.Core.Math.Vector3;
 
 namespace Assets.Scripts.Scenes.Game
 {
-    [RequireComponent(typeof(GameOverBehaviour))]
     public class GameMainBehaviour : MonoBehaviour
     {
         private readonly Dictionary<String, GameObject> catapultTemplateCache = new Dictionary<String, GameObject>();
@@ -28,9 +27,8 @@ namespace Assets.Scripts.Scenes.Game
         [SerializeField] private GameObject cube;
 
         [SerializeField] private DialScriptableObjectScript angleDial;
-        [SerializeField] private DialScriptableObjectScript strengthDial;
-
-        private GameOverBehaviour gameOverBehaviour;
+        [SerializeField] private DialScriptableObjectScript powerDial;
+        [SerializeField] private GameOverBehaviour gameOverBehaviour;
 
         public void OnRetryClicked()
         {
@@ -52,8 +50,6 @@ namespace Assets.Scripts.Scenes.Game
 
         private void Init()
         {
-            this.gameOverBehaviour = GetComponent<GameOverBehaviour>();
-
             LoadTemplates();
 
             var currentLevel = Base.Core.Game.State.Level;
@@ -79,7 +75,7 @@ namespace Assets.Scripts.Scenes.Game
 
             if (currentPlayer != default)
             {
-                currentPlayer.Catapult.FiringStrength = value;
+                currentPlayer.Catapult.FiringPower = value;
             }
         }
 
@@ -116,10 +112,14 @@ namespace Assets.Scripts.Scenes.Game
 
                     var rigidbody = projectileBehaviour.GetComponent<Rigidbody>();
 
-                    var rotation = Quaternion.Euler(0f, 0f, playerBehaviour.Player.Catapult.FiringAngle);
-                    var direction = rotation * Vector3.right;
+                    Debug.Log($"Firing at angle: {playerBehaviour.Player.Catapult.FiringAngle}!");
 
-                    var force = direction.normalized * playerBehaviour.Player.Catapult.FiringStrength;
+                    var catapultRotation = playerBehaviour.transform.rotation;
+
+                    var rotation = Quaternion.Euler(0f, 0f, playerBehaviour.transform.rotation .y - playerBehaviour.Player.Catapult.FiringAngle);
+                    var direction = catapultRotation.normalized * rotation * Vector3.up;
+
+                    var force = 0.1f * playerBehaviour.Player.Catapult.FiringPower * direction.normalized;
 
                     rigidbody.AddForce(force, ForceMode.Impulse);
 
@@ -142,6 +142,9 @@ namespace Assets.Scripts.Scenes.Game
             if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var behaviour))
             {
                 behaviour.DisableInput();
+
+                behaviour.AngleChanged -= PlayerBehaviour_AngleChanged;
+                behaviour.PowerChanged -= PlayerBehaviour_PowerChanged;
             }
 
             var nextPlayer = default(Player);
@@ -179,7 +182,14 @@ namespace Assets.Scripts.Scenes.Game
                 }
             }
 
+            SetCurrentPlayer(nextPlayer, gameState);
+        }
+
+        private void SetCurrentPlayer(Player nextPlayer, GameState gameState = default)
+        {
             gameState.CurrentPlayer = nextPlayer;
+
+            SetPlayerValues(nextPlayer);
 
             if (nextPlayer.IsHuman)
             {
@@ -187,21 +197,42 @@ namespace Assets.Scripts.Scenes.Game
 
                 if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var nextPlayerBehaviour))
                 {
+                    nextPlayerBehaviour.AngleChanged += PlayerBehaviour_AngleChanged;
+                    nextPlayerBehaviour.PowerChanged += PlayerBehaviour_PowerChanged;
                     nextPlayerBehaviour.EnableInput();
                 }
             }
         }
 
+        private void SetPlayerValues(Player player)
+        {
+            angleDial.SetValues(player.Catapult.FiringArc.Min.Value, player.Catapult.FiringArc.Max.Value, player.Catapult.FiringAngle);
+            //angleDial.SetValue(player.Catapult.FiringAngle);
+
+            powerDial.SetValues(player.Catapult.PossibleFiringPower.Min.Value, player.Catapult.PossibleFiringPower.Max.Value, player.Catapult.FiringPower);
+            //powerDial.SetValue(player.Catapult.FiringPower);
+        }
+
+        private void PlayerBehaviour_AngleChanged(PlayerBehaviour behaviour, Single value)
+        {
+            angleDial.SetValue(value);
+        }
+
+        private void PlayerBehaviour_PowerChanged(PlayerBehaviour behaviour, Single value)
+        {
+            powerDial.SetValue(value);
+        }
+
         private void EnableInput()
         {
             this.angleDial.OnValueChanged += AngleDial_OnValueChanged;
-            this.strengthDial.OnValueChanged += StrengthDial_OnValueChanged;
+            this.powerDial.OnValueChanged += StrengthDial_OnValueChanged;
         }
 
         private void DisableInput()
         {
             this.angleDial.OnValueChanged -= AngleDial_OnValueChanged;
-            this.strengthDial.OnValueChanged -= StrengthDial_OnValueChanged;
+            this.powerDial.OnValueChanged -= StrengthDial_OnValueChanged;
         }
 
         private void ShowGameOver(Player winner)
@@ -235,15 +266,7 @@ namespace Assets.Scripts.Scenes.Game
             {
                 gameState.CurrentPlayer = gameState.Players[0];
 
-                if (gameState.CurrentPlayer.IsHuman)
-                {
-                    EnableInput();
-
-                    if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var nextPlayerBehaviour))
-                    {
-                        nextPlayerBehaviour.EnableInput();
-                    }
-                }
+                SetCurrentPlayer(gameState.CurrentPlayer, gameState);
             }
         }
 
@@ -264,8 +287,10 @@ namespace Assets.Scripts.Scenes.Game
             var catapultTemplate = GetTemplate(catapultTemplateCache, player.Catapult.TemplateReference);
             var spawnedCatapult = SpawnObject(catapultTemplate, objectContainer, player.Name, position);
 
+            var catapultBehaviour = spawnedCatapult.GetComponent<CatapultBehaviour>();
             var objectBehaviour = spawnedCatapult.GetComponent<ObjectsBehaviour>();
 
+            catapultBehaviour.Init(player);
             objectBehaviour.Init(player.Health, false, 1);
 
             var playerBehaviour = SetPlayerBehaviour(player, spawnedCatapult);

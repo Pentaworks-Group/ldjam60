@@ -4,13 +4,20 @@ using System.IO;
 using UnityEngine;
 using UnityVector3 = UnityEngine.Vector3;
 using Vector2 = GameFrame.Core.Math.Vector2;
+using Vector2Int = GameFrame.Core.Math.Vector2Int;
 
 namespace Assets.Scripts.Map
 {
-    public class GenerationBehaviour : MonoBehaviour
+    public class LandBehaviour : MonoBehaviour
     {
         [SerializeField]
         private Material Ground;
+
+        private MapDefinition currentMap;
+        private List<Vector2> boundaryPoints;
+
+        private float relativeMapWidht;
+        private float relativeMapHeight;
 
         private void Awake()
         {
@@ -18,12 +25,80 @@ namespace Assets.Scripts.Map
             Init();
         }
 
+
+        public float CreateFlatSurface(float centerCoordinate, float width)
+        {
+
+            int centerX = GetIndexFromCoordinateX(centerCoordinate);
+            int half = Mathf.CeilToInt((width * relativeMapWidht) / 2);
+            int start = Mathf.Max(0, centerX - half);
+            int end = Mathf.Min(currentMap.Size.X - 1, centerX + half);
+
+            var texture = currentMap.TextureMap;
+
+            int height = currentMap.Size.Y;
+            for (int y = height - 1; y >= 0; y--)
+            {
+                if (texture[centerX, y] != 0)
+                {
+                    height = y;
+                    break;
+                }
+            }
+
+
+            var material = texture[centerX, height];
+
+            for (int i = start; i <= end; i++)
+            {
+                if (texture[i, height] != 0)
+                {
+                    int y = height + 1;
+                    while (y < currentMap.Size.Y && texture[i, y] != 0)
+                    {
+                        texture[i, y] = 0;
+                        y++;
+                    }
+                }
+                else
+                {
+                    int y = height;
+                    while (y > 0 && texture[i, y] == 0)
+                    {
+                        texture[i, y] = material;
+                        y--;
+                    }
+                }
+            }
+
+            RebuildMesh();
+
+            return GetCoordinateFromIndexY(height);
+        }
+
+        private int GetIndexFromCoordinateX(float coordinate)
+        {            
+            var start = transform.position.x;
+            var diff = coordinate - start;
+            var rawIndex = diff / relativeMapWidht;
+            return (int)rawIndex;
+        }
+
+
+        private float GetCoordinateFromIndexY(float index)
+        {
+            var y = transform.position.y;
+            var relativeY = index * relativeMapHeight;
+            var finalY = y + relativeY;
+            Debug.Log($"y: {y}, relativeY:{relativeY}, finalY:{finalY}, relativeMapHeight:{relativeMapHeight}");
+            return finalY;
+        }
+
         private void Init()
         {
-            Debug.Log("Starting");
-            Vector2 size = new(1000, 1000);
+            Vector2Int size = new(1000, 1000);
 
-            MapDefinition map = new MapDefinition()
+            currentMap = new MapDefinition()
             {
                 Size = size,
                 TextureMap = GenerateTestEnvironment(1, size)
@@ -34,43 +109,43 @@ namespace Assets.Scripts.Map
             Physics.gravity = new UnityVector3(0, 3 * Physics.gravity.y, 0);
 
 
-            Mesh mesh = new Mesh();
+
+            int xSize = currentMap.Size.X;
+            int ySize = currentMap.Size.Y;
+            this.gameObject.transform.position = new UnityVector3(-xSize / 2, -ySize / 2, 0);
+
+            RebuildMesh();
+
+            var renderer = GetComponent<Renderer>();
+            var sizeX = renderer.bounds.size.x;
+            this.relativeMapWidht = currentMap.Size.X / sizeX;
 
 
-            int xSize = map.TextureMap.GetLength(0);
-            int ySize = map.TextureMap.GetLength(1);
+            this.relativeMapHeight = (currentMap.Size.Y / currentMap.Size.X) * relativeMapWidht;
+        }
+
+        private void RebuildMesh()
+        {
+            boundaryPoints = GetBoundingPoints(currentMap, 1);
+
+            List<UnityVector3> vertices = new List<UnityVector3>();
+            List<int> triangles = new List<int>();
 
 
-            var boundaryPoints = GetBoundingPoints(map, 1);
-            int numBoundaryPoints = boundaryPoints.Count;
-
-            UnityVector3[] vertices = new UnityVector3[numBoundaryPoints * 2];
-            for (int i = 0; i < numBoundaryPoints; i++)
+            foreach (var p in boundaryPoints)
             {
-                Vector2 point = boundaryPoints[i];
-                //float flippedY = ySize - point.Y;
-
-
-                //vertices[i] = new UnityVector3(point.X, flippedY, -5f);
-                //vertices[i + numBoundaryPoints] = new UnityVector3(point.X, flippedY, 5f);
-                vertices[i] = new UnityVector3(point.X, point.Y, -5f);
-                vertices[i + numBoundaryPoints] = new UnityVector3(point.X, point.Y, 5f);
-
-
+                vertices.Add(new UnityVector3(p.X, p.Y, 0));
             }
-
-            mesh.vertices = vertices;
-
-
-            List<int> triangles = GetTriangleList(boundaryPoints);
-            triangles.Reverse();
+            triangles.AddRange(GetTriangleList(boundaryPoints));
 
 
-            mesh.triangles = BoostTriangles(triangles, numBoundaryPoints).ToArray();
+            Mesh mesh = new();
+            mesh.SetVertices(vertices);
+            mesh.SetTriangles(triangles, 0);
 
+            mesh.name = "MeshGeneratedByScript";
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
-            mesh.name = "MeshGeneratedByScript";
 
 
             var meshFilter = GetComponent<MeshFilter>();
@@ -78,9 +153,6 @@ namespace Assets.Scripts.Map
             var meshCollider = GetComponent<MeshCollider>();
             meshCollider.sharedMesh = null;
             meshCollider.sharedMesh = mesh;
-
-
-            this.gameObject.transform.position = new UnityVector3(-xSize / 2, -ySize / 2, 0);
         }
 
         private static List<int> BoostTriangles(List<int> originalTriangles, int numBoundaryPoints)
@@ -132,9 +204,6 @@ namespace Assets.Scripts.Map
             }
             List<int> triangleList = new List<int>();
 
-
-
-            Debug.Log($"GetTriangleList: {indexList.Count}");
 
             for (int i = indexList.Count - 1; i >= 0; i--)
             {
@@ -264,10 +333,10 @@ namespace Assets.Scripts.Map
         }
 
 
-        private static int[,] GenerateTestEnvironment(int material, Vector2 size)
+        private static int[,] GenerateTestEnvironment(int material, Vector2Int size)
         {
-            int width = (int)size.X;
-            int height = (int)size.Y;
+            int width = size.X;
+            int height = size.Y;
 
             int[,] texture = new int[width, height];
 

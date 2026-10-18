@@ -11,13 +11,13 @@ namespace Assets.Scripts.Scenes.Game
     {
         public UnityEvent<PlayerBehaviour> ShotFired = new UnityEvent<PlayerBehaviour>();
         public event Action<PlayerBehaviour, Single> AngleChanged;
+        public event Action<PlayerBehaviour, Single> PowerChanged;
 
         public abstract Player Player { get; }
 
         public void Init(Player player)
         {
             InnerInit(player);
-
         }
 
         public virtual void EnableInput()
@@ -39,6 +39,10 @@ namespace Assets.Scripts.Scenes.Game
         {
 
         }
+        protected virtual void InnerOnDestroy()
+        {
+
+        }
 
         protected virtual void InnerUpdate()
         {
@@ -50,6 +54,11 @@ namespace Assets.Scripts.Scenes.Game
             this.AngleChanged?.Invoke(this, angle);
         }
 
+        protected void OnPowerChanged(Single power)
+        {
+            this.PowerChanged?.Invoke(this, power);
+        }
+
         private void Awake()
         {
             InnerAwake();
@@ -58,6 +67,11 @@ namespace Assets.Scripts.Scenes.Game
         private void Start()
         {
             InnerStart();
+        }
+
+        private void OnDestroy()
+        {
+            InnerOnDestroy();
         }
 
         private void Update()

@@ -10,6 +10,9 @@ namespace Assets.Scripts.Scenes.Game
         [SerializeField]
         private Transform handleTransform;
 
+        [SerializeField]
+        private Transform additionalTransform;
+
         [Tooltip("Click Sensitivity, changes percentage")]
         [SerializeField]
         private float sensitivty;
@@ -55,6 +58,7 @@ namespace Assets.Scripts.Scenes.Game
         private void UpdateUI(float value)
         {
             handleTransform.rotation = Quaternion.Euler(0, 0, 90 - variable.Percentage * 180);
+            additionalTransform.rotation = Quaternion.Euler(0, 0, 90 - (variable.Percentage / 8) * 180);
         }
 
         public float GetPercentage()
