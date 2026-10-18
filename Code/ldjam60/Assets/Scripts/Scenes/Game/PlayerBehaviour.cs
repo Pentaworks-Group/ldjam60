@@ -1,3 +1,5 @@
+using System;
+
 using Assets.Scripts.Core.Models;
 
 using UnityEngine;
@@ -8,6 +10,7 @@ namespace Assets.Scripts.Scenes.Game
     public abstract class PlayerBehaviour : MonoBehaviour
     {
         public UnityEvent<PlayerBehaviour> ShotFired = new UnityEvent<PlayerBehaviour>();
+        public event Action<PlayerBehaviour, Single> AngleChanged;
 
         public abstract Player Player { get; }
 
@@ -40,6 +43,11 @@ namespace Assets.Scripts.Scenes.Game
         protected virtual void InnerUpdate()
         {
 
+        }
+
+        protected void OnAngleChanged(Single angle)
+        {
+            this.AngleChanged?.Invoke(this, angle);
         }
 
         private void Awake()

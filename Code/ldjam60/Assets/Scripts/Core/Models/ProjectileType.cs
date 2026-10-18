@@ -8,7 +8,7 @@ namespace Assets.Scripts.Core.Models
         public Boolean IsDefault { get; set; }
         public Decimal Cost { get; set; }
         public Single Mass { get; set; }
-        public Double Damage { get; set; }
+        public Single Damage { get; set; }
         public String TemplateReference { get; set; }
     }
 }

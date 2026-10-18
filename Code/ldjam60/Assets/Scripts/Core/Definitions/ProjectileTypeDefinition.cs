@@ -10,7 +10,7 @@ namespace Assets.Scripts.Core.Definitions
         public Boolean? IsDefault { get; set; }
         public Decimal? Cost { get; set; }
         public GameFrame.Core.Math.Range Mass { get; set; }
-        public Double? Damage { get; set; }
+        public Single? Damage { get; set; }
         public String TemplateReference { get; set; }
     }
 }

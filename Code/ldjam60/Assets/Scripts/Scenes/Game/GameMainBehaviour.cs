@@ -15,29 +15,48 @@ using FrameVector3 = GameFrame.Core.Math.Vector3;
 
 namespace Assets.Scripts.Scenes.Game
 {
+    [RequireComponent(typeof(GameOverBehaviour))]
     public class GameMainBehaviour : MonoBehaviour
     {
         private readonly Dictionary<String, GameObject> catapultTemplateCache = new Dictionary<String, GameObject>();
         private readonly Dictionary<String, GameObject> projectileTemplateCache = new Dictionary<String, GameObject>();
         private readonly Dictionary<Guid, PlayerBehaviour> playerBehaviours = new Dictionary<Guid, PlayerBehaviour>();
 
-        [SerializeField]
-        private Image backgroundImage;
+        [SerializeField] private Image backgroundImage;
+        [SerializeField] private Transform objectContainer;
+        [SerializeField] private GameObject templateRootObject;
+        [SerializeField] private GameObject cube;
 
-        [SerializeField]
-        private GameObject templateRootObject;
+        [SerializeField] private DialScriptableObjectScript angleDial;
+        [SerializeField] private DialScriptableObjectScript strengthDial;
 
-        [SerializeField]
-        private Transform objectContainer;
+        private GameOverBehaviour gameOverBehaviour;
+
+        public void OnRetryClicked()
+        {
+            var gameState = Base.Core.Game.State;
+
+            Base.Core.Game.Start(gameState.GameModeReference);
+        }
+
+        public void OnQuitClicked()
+        {
+
+
+
+            Base.Core.Game.Stop();
+            Base.Core.Game.ChangeScene(Constants.Scenes.MainMenu);
+        }
 
         private void Awake()
         {
-
             Base.Core.Game.ExecuteAfterInstantation(Init);
         }
 
         private void Init()
         {
+            this.gameOverBehaviour = GetComponent<GameOverBehaviour>();
+
             LoadTemplates();
 
             var currentLevel = Base.Core.Game.State.Level;
@@ -45,6 +64,26 @@ namespace Assets.Scripts.Scenes.Game
             this.backgroundImage.sprite = GameFrame.Base.Resources.Manager.Sprites.Get(currentLevel.BackgroundReference);
 
             InitWorld(Base.Core.Game.State);
+        }
+
+        private void AngleDial_OnValueChanged(Single value)
+        {
+            var currentPlayer = Base.Core.Game.State.CurrentPlayer;
+
+            if (currentPlayer != default)
+            {
+                currentPlayer.Catapult.FiringAngle = value;
+            }
+        }
+
+        private void StrengthDial_OnValueChanged(Single value)
+        {
+            var currentPlayer = Base.Core.Game.State.CurrentPlayer;
+
+            if (currentPlayer != default)
+            {
+                currentPlayer.Catapult.FiringStrength = value;
+            }
         }
 
         private void OnShotFired(PlayerBehaviour playerBehaviour)
@@ -91,7 +130,10 @@ namespace Assets.Scripts.Scenes.Game
 
                     playerBehaviour.Player.Credits -= projectileType.Cost;
 
+                    DisableInput();
                     playerBehaviour.DisableInput();
+
+                    projectile.IsFired = true;
                 }
             }
         }
@@ -99,6 +141,8 @@ namespace Assets.Scripts.Scenes.Game
         private void MoveToNextPlayer()
         {
             var gameState = Base.Core.Game.State;
+
+            DisableInput();
 
             if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var behaviour))
             {
@@ -111,7 +155,10 @@ namespace Assets.Scripts.Scenes.Game
 
             if (availablePlayers.Count <= 1)
             {
-                // Game Over!
+                ShowGameOver(Base.Core.Game.State.CurrentPlayer);
+                gameState.CurrentPlayer = default;
+
+                return;
             }
             else
             {
@@ -139,10 +186,33 @@ namespace Assets.Scripts.Scenes.Game
 
             gameState.CurrentPlayer = nextPlayer;
 
-            if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var nextPlayerBehaviour))
+            if (nextPlayer.IsHuman)
             {
-                nextPlayerBehaviour.EnableInput();
+                EnableInput();
+
+                if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var nextPlayerBehaviour))
+                {
+                    nextPlayerBehaviour.EnableInput();
+                }
             }
+        }
+
+        private void EnableInput()
+        {
+            this.angleDial.OnValueChanged += AngleDial_OnValueChanged;
+            this.strengthDial.OnValueChanged += StrengthDial_OnValueChanged;
+        }
+
+        private void DisableInput()
+        {
+            this.angleDial.OnValueChanged -= AngleDial_OnValueChanged;
+            this.strengthDial.OnValueChanged -= StrengthDial_OnValueChanged;
+        }
+
+        private void ShowGameOver(Player winner)
+        {
+            this.gameOverBehaviour.SetWinner(winner);
+            this.gameOverBehaviour.Show();
         }
 
         private void LoadTemplates()
@@ -170,9 +240,14 @@ namespace Assets.Scripts.Scenes.Game
             {
                 gameState.CurrentPlayer = gameState.Players[0];
 
-                if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var playerBehaviour))
+                if (gameState.CurrentPlayer.IsHuman)
                 {
-                    playerBehaviour.EnableInput();
+                    EnableInput();
+
+                    if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var nextPlayerBehaviour))
+                    {
+                        nextPlayerBehaviour.EnableInput();
+                    }
                 }
             }
         }
@@ -187,10 +262,16 @@ namespace Assets.Scripts.Scenes.Game
 
         private void SpawnPlayer(Player player)
         {
-            var postion = new UnityEngine.Vector3(player.Position.X, player.Position.Y, 0);
+            var height = GetWorldHeight(player.Position.X);
+
+            var position = new UnityEngine.Vector3(player.Position.X, height + 0.2f, 0);
 
             var catapultTemplate = GetTemplate(catapultTemplateCache, player.Catapult.TemplateReference);
-            var spawnedCatapult = SpawnObject(catapultTemplate, objectContainer, player.Name, postion);
+            var spawnedCatapult = SpawnObject(catapultTemplate, objectContainer, player.Name, position);
+
+            var objectBehaviour = spawnedCatapult.GetComponent<ObjectsBehaviour>();
+
+            objectBehaviour.Init(player.Health, false, 1);
 
             var playerBehaviour = SetPlayerBehaviour(player, spawnedCatapult);
 
@@ -216,6 +297,11 @@ namespace Assets.Scripts.Scenes.Game
 
             var rigidbody = spawnedProjectile.GetComponent<Rigidbody>();
             var projectileBehaviour = spawnedProjectile.GetComponent<ProjectileBehaviour>();
+            var objectBehaviour = spawnedProjectile.GetComponent<ObjectsBehaviour>();
+
+            projectileBehaviour.Init(projectile);
+            projectileBehaviour.ProjectileStopped += ProjectileBehaviour_ProjectileStopped;
+            objectBehaviour.Init(1f, false, projectile.Type.Damage);
 
             rigidbody.mass = projectile.Type.Mass;
 
@@ -232,6 +318,13 @@ namespace Assets.Scripts.Scenes.Game
             spawnedProjectile.SetActive(true);
 
             return projectileBehaviour;
+        }
+
+        private void ProjectileBehaviour_ProjectileStopped(ProjectileBehaviour behaviour)
+        {
+            behaviour.ProjectileStopped -= ProjectileBehaviour_ProjectileStopped;
+
+            MoveToNextPlayer();
         }
 
         private PlayerBehaviour SetPlayerBehaviour(Player player, GameObject catapult)
@@ -286,13 +379,27 @@ namespace Assets.Scripts.Scenes.Game
         {
             if (destroyedGameObject.TryGetComponent<PlayerBehaviour>(out var playerBehaviour))
             {
+                playerBehaviour.Player.IsDestroyed = true;
                 this.playerBehaviours.Remove(playerBehaviour.Player.ID);
+
+                if (this.playerBehaviours.Count == 1)
+                {
+                    ShowGameOver(this.playerBehaviours.Values.First().Player);                    
+                }
             }
 
             if (destroyedGameObject.TryGetComponent<ProjectileBehaviour>(out var projectileBehaviour))
             {
                 MoveToNextPlayer();
             }
+        }
+
+        private Single GetWorldHeight(Single positionX)
+        {
+            // THIS IS A HACK! REMOVE IT!
+            var renderer = this.cube.GetComponent<Renderer>();
+
+            return renderer.bounds.extents.y;
         }
     }
 }

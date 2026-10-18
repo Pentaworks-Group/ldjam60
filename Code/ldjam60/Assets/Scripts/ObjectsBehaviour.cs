@@ -1,3 +1,5 @@
+using System;
+
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,8 +19,6 @@ namespace Assets.Scripts
 
         private float speedMultiplier = 0.001f;
 
-
-
         private void OnTriggerExit(Collider other)
         {
             if (other.gameObject == outsideCollider)
@@ -27,7 +27,6 @@ namespace Assets.Scripts
                 OnObjectDestroyed(gameObject);
                 return;
             }
-
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -40,7 +39,6 @@ namespace Assets.Scripts
             {
                 TakeImpactDamage(collision.relativeVelocity.sqrMagnitude, speedMultiplier);
             }
-
         }
 
         private void TakeImpactDamage(float relativeSpeedSQR, float impactDamageMultiplier)
@@ -48,6 +46,7 @@ namespace Assets.Scripts
             if (!indestructable)
             {
                 var speedDmg = relativeSpeedSQR * impactDamageMultiplier;
+
                 if (speedDmg > health * 0.1f)
                 {
                     health -= speedDmg;
@@ -64,6 +63,7 @@ namespace Assets.Scripts
             if (!indestructable)
             {
                 health -= dmg;
+
                 if (health <= 0)
                 {
                     OnObjectDestroyed(gameObject);
@@ -84,5 +84,9 @@ namespace Assets.Scripts
             this.ImpactDamage = impactDamage;
         }
 
+        internal void SetIsDestructable(Boolean isDestructable)
+        {
+            this.indestructable = !isDestructable;
+        }
     }
 }

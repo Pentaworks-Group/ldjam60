@@ -17,6 +17,15 @@ namespace Assets.Scripts.Core
 
         private GameMode selectedGameMode;
 
+        public void Start(String gameModeReference)
+        {
+            if (gameModeCache.TryGetValue(gameModeReference, out var gameMode))
+            {
+                this.selectedGameMode = gameMode;
+                Start();
+            }
+        }
+
         protected override GameState InitializeGameState()
         {
             var gameMode = this.selectedGameMode;

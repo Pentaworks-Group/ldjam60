@@ -3,6 +3,7 @@
     "Reference": "Stone",
     "Name": "Stone",
     "Cost": 0,
+    "Damage": 100,
     "Mass": {
       "Min": 0.9,
       "Max": 1.1

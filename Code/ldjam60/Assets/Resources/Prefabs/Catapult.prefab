@@ -55,8 +55,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 0.55, z: 1}
+  m_Center: {x: 0, y: -0.23, z: 0}
 --- !u!54 &3345817067680229903
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -156,6 +156,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.ObjectsDestructionBehaviour
   outsideCollider: {fileID: 0}
+  ObjectDestroyed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &7824297405428176710
 MonoBehaviour:
   m_ObjectHideFlags: 0

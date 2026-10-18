@@ -22,6 +22,7 @@ namespace Assets.Scripts.Core
         {
             var gameState = new GameState()
             {
+                GameModeReference = gameMode.Reference,
                 CurrentScene = "Game",
                 TurnCount = 1,
                 Level = ConvertLevel(gameMode.Level),
