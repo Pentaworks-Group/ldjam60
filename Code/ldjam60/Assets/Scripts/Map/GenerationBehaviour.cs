@@ -1,5 +1,6 @@
 using Assets.Scripts.Core.Definitions;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityVector3 = UnityEngine.Vector3;
 using Vector2 = GameFrame.Core.Math.Vector2;
@@ -28,6 +29,8 @@ namespace Assets.Scripts.Map
                 TextureMap = GenerateTestEnvironment(1, size)
             };
 
+            //ExportToPNG(map.TextureMap, "environmentPng.png");
+
             Physics.gravity = new UnityVector3(0, 3 * Physics.gravity.y, 0);
 
 
@@ -45,11 +48,13 @@ namespace Assets.Scripts.Map
             for (int i = 0; i < numBoundaryPoints; i++)
             {
                 Vector2 point = boundaryPoints[i];
-                float flippedY = ySize - point.Y;
+                //float flippedY = ySize - point.Y;
 
 
-                vertices[i] = new UnityVector3(point.X, flippedY, -5f);
-                vertices[i + numBoundaryPoints] = new UnityVector3(point.X, flippedY, 5f);
+                //vertices[i] = new UnityVector3(point.X, flippedY, -5f);
+                //vertices[i + numBoundaryPoints] = new UnityVector3(point.X, flippedY, 5f);
+                vertices[i] = new UnityVector3(point.X, point.Y, -5f);
+                vertices[i + numBoundaryPoints] = new UnityVector3(point.X, point.Y, 5f);
 
 
             }
@@ -205,48 +210,44 @@ namespace Assets.Scripts.Map
             return true;
         }
 
+
         private static List<Vector2> GetBoundingPoints(MapDefinition mapDefinition, int material)
         {
-            List<Vector2> leftSide = new();
-            List<Vector2> rightSide = new();
-
+            List<Vector2> boundingPoints = new();
             var texture = mapDefinition.TextureMap;
-            int numRows = texture.GetLength(0);
-            int numCols = texture.GetLength(1);
+            int width = texture.GetLength(0);
+            int height = texture.GetLength(1);
+
+            // Track the absolute floor level and the maximum column width bounds
+            int startX = 0;
+            int endX = width - 1;
 
 
-            for (int r = 0; r < numRows; r++)
+            for (int x = startX; x <= endX; x++)
             {
-                int firstOneIndex = -1;
-                int lastOneIndex = -1;
-
-                for (int c = 0; c < numCols; c++)
+                // Scan down from the top of the map to find the highest solid pixel
+                int surfaceY = 0;
+                for (int y = height - 1; y >= 0; y--)
                 {
-                    if (texture[r, c] == material)
+                    if (texture[x, y] == material)
                     {
-                        if (firstOneIndex == -1)
-                        {
-                            firstOneIndex = c;
-                        }
-                        lastOneIndex = c;
+                        surfaceY = y;
+                        break;
                     }
                 }
+                boundingPoints.Add(new Vector2(x, surfaceY));
+            }
 
-                if (firstOneIndex != -1)
-                {
-                    leftSide.Add(new Vector2(firstOneIndex, r));
-                    if (lastOneIndex != -1)
-                    {
-                        rightSide.Add(new Vector2(lastOneIndex, r));
-                    }
-                }
-            }
-            List<Vector2> bountdingVertices = new(leftSide);
-            for (int i = rightSide.Count - 1; i >= 0; i--)
+            boundingPoints.Add(new Vector2(endX, 0));
+
+            for (int x = endX - 1; x > startX; x--)
             {
-                bountdingVertices.Add(rightSide[i]);
+                boundingPoints.Add(new Vector2(x, 0));
             }
-            return bountdingVertices;
+
+            boundingPoints.Add(new Vector2(startX, 0));
+
+            return boundingPoints;
         }
 
 
@@ -273,23 +274,67 @@ namespace Assets.Scripts.Map
             // Random seed: each call produces a different landscape
             float seed = Random.Range(0f, 1000f);
 
-            for (int c = 0; c < width; c++)
+            for (int x = 0; x < width; x++)
             {
-                // Layered Perlin noise: broad hills + medium bumps + fine detail
-                float noise = Mathf.PerlinNoise((c + seed) * 0.05f, seed) * 0.5f
-                            + Mathf.PerlinNoise((c + seed) * 0.15f, seed + 100f) * 0.3f
-                            + Mathf.PerlinNoise((c + seed) * 0.5f, seed + 200f) * 0.2f;
+                //smaller perlinNoise factor == less frequent
+                float primaryHill = Mathf.PerlinNoise((x * 0.003f) + seed, seed) * 0.7f;
+                float gentleBumps = Mathf.PerlinNoise((x * 0.015f) + seed, seed + 100f) * 0.15f;
 
-                float columnHeight = noise * height * 0.45f;
-                columnHeight = Mathf.Clamp(columnHeight, 1, height - 1);
+                float noise = primaryHill + gentleBumps;
+
+
+                float columnHeight = noise * height * 0.55f;
+                columnHeight = Mathf.Clamp(columnHeight, 1, height * 0.9f);
 
                 // Fill from the bottom up: ground sits at the bottom of the texture
-                for (int r = height - 1; r >= height - columnHeight; r--)
+                for (int y = 0; y < columnHeight; y++)
                 {
-                    texture[r, c] = material;
+                    texture[x, y] = material;
                 }
             }
             return texture;
+        }
+
+        public static void ExportToPNG(int[,] grid, string fileName)
+        {
+            int width = grid.GetLength(0);
+            int height = grid.GetLength(1);
+
+            // 1. Create a new Texture2D
+            Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            texture.filterMode = FilterMode.Point; // Keeps pixels sharp if you zoom in
+            texture.wrapMode = TextureWrapMode.Clamp;
+
+            // 2. Loop through the array and map integers to pixels
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int value = grid[x, y];
+
+                    // Fallback to magenta if the integer goes beyond your provided colors array
+      
+                    Color pixelColor = (value > 0) ? Color.black : Color.white;
+
+                    texture.SetPixel(x, y, pixelColor);
+                }
+            }
+
+            // 3. Apply structural changes to the texture
+            texture.Apply();
+
+            // 4. Convert the texture into PNG bytes
+            byte[] pngData = ImageConversion.EncodeToPNG(texture);
+
+            // 5. Save the file to disk
+            string filePath = Path.Combine(Application.dataPath, fileName);
+            //File.Delete(filePath);
+            File.WriteAllBytes(filePath, pngData);
+
+            // Clean up memory
+            Object.DestroyImmediate(texture);
+
+            Debug.Log($"Image successfully exported to: {filePath}");
         }
 
         private static int WrapIndex(int index, int count)
