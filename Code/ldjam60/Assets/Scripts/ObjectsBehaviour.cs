@@ -23,7 +23,6 @@ namespace Assets.Scripts
         {
             if (other.gameObject == outsideCollider)
             {
-                Debug.Log("Reached the outside");
                 OnObjectDestroyed(gameObject);
                 return;
             }
@@ -33,7 +32,7 @@ namespace Assets.Scripts
         {
             if (collision.gameObject.TryGetComponent<ObjectsBehaviour>(out var component))
             {
-                TakeImpactDamage(collision.relativeVelocity.sqrMagnitude, component.ImpactDamage);
+                TakeImpactDamage(collision.relativeVelocity.sqrMagnitude, component.ImpactDamage);                
             }
             else
             {

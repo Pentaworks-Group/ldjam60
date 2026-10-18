@@ -13,22 +13,39 @@ namespace Assets.Scripts.Map
         [SerializeField]
         private Material Ground;
 
+
+        [SerializeField]
+        private float purlinscaleHill = .005f;
+        [SerializeField]
+        private float purlinscaleBump = .015f;
+        [SerializeField]
+        private float hillratio = .75f;
+        [SerializeField]
+        private float heightscale = .9f;
+        [SerializeField]
+        private int minHeight = 5;
+        [SerializeField]
+        private Vector2Int MapSize = new Vector2Int();
+
+
         private MapDefinition currentMap;
         private List<Vector2> boundaryPoints;
 
         private float relativeMapWidht;
         private float relativeMapHeight;
 
+
+
         private void Awake()
         {
             //Base.Core.Game.ExecuteAfterInstantation(Init);
-            Init();
+            GenarateMap();
         }
 
 
         public float CreateFlatSurface(float centerCoordinate, float width)
         {
-
+            Debug.Log($"Creating surface at {centerCoordinate} with width {width}");
             int centerX = GetIndexFromCoordinateX(centerCoordinate);
             int half = Mathf.CeilToInt((width * relativeMapWidht) / 2);
             int start = Mathf.Max(0, centerX - half);
@@ -77,7 +94,7 @@ namespace Assets.Scripts.Map
         }
 
         private int GetIndexFromCoordinateX(float coordinate)
-        {            
+        {
             var start = transform.position.x;
             var diff = coordinate - start;
             var rawIndex = diff / relativeMapWidht;
@@ -90,13 +107,17 @@ namespace Assets.Scripts.Map
             var y = transform.position.y;
             var relativeY = index * relativeMapHeight;
             var finalY = y + relativeY;
-            Debug.Log($"y: {y}, relativeY:{relativeY}, finalY:{finalY}, relativeMapHeight:{relativeMapHeight}");
             return finalY;
         }
 
-        private void Init()
+        public void ReGenerateMap()
         {
-            Vector2Int size = new(1000, 1000);
+            GenarateMap();
+        }
+
+        private void GenarateMap()
+        {
+            Vector2Int size = MapSize;
 
             currentMap = new MapDefinition()
             {
@@ -333,7 +354,7 @@ namespace Assets.Scripts.Map
         }
 
 
-        private static int[,] GenerateTestEnvironment(int material, Vector2Int size)
+        private int[,] GenerateTestEnvironment(int material, Vector2Int size)
         {
             int width = size.X;
             int height = size.Y;
@@ -342,23 +363,20 @@ namespace Assets.Scripts.Map
 
             // Random seed: each call produces a different landscape
             float seed = Random.Range(0f, 1000f);
-            float purlinscaleHill = .005f;
-            float purlinscaleBump = .015f;
-            float hillratio = .75f;
-            float heightscale = .9f;
+
 
 
             for (int x = 0; x < width; x++)
             {
                 //smaller perlinNoise factor == less frequent
-                float primaryHill = Mathf.PerlinNoise((x * 0.005f) + seed, seed) * hillratio;
-                float gentleBumps = Mathf.PerlinNoise((x * 0.015f) + seed, seed + 100f)*1-hillratio;
+                float primaryHill = Mathf.PerlinNoise((x * purlinscaleHill) + seed, seed) * hillratio;
+                float gentleBumps = Mathf.PerlinNoise((x * purlinscaleBump) + seed, seed + 100f) * 1 - hillratio;
 
                 float noise = primaryHill + gentleBumps;
 
 
                 float columnHeight = noise * height * heightscale;
-                columnHeight = Mathf.Clamp(columnHeight, 1, height * 0.95f);
+                columnHeight = Mathf.Clamp(columnHeight, minHeight, height * 0.95f);
 
                 // Fill from the bottom up: ground sits at the bottom of the texture
                 for (int y = 0; y < columnHeight; y++)
@@ -387,7 +405,7 @@ namespace Assets.Scripts.Map
                     int value = grid[x, y];
 
                     // Fallback to magenta if the integer goes beyond your provided colors array
-      
+
                     Color pixelColor = (value > 0) ? Color.black : Color.white;
 
                     texture.SetPixel(x, y, pixelColor);
