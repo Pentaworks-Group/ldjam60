@@ -67,6 +67,9 @@ namespace Assets.Scripts.Core
             AddHumans(players, availableSpawnPositions);
 
             AddBots(availableSpawnPositions, players);
+            
+            players.Shuffle();
+
             return players;
         }
 
