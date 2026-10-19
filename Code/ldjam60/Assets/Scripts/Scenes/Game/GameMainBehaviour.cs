@@ -1,16 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using Assets.Scripts.Core;
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Core.Models.Players;
-
+using Assets.Scripts.Map;
 using GameFrame.Core.Extensions;
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-
 using FrameVector3 = GameFrame.Core.Math.Vector3;
 
 namespace Assets.Scripts.Scenes.Game
@@ -21,14 +18,21 @@ namespace Assets.Scripts.Scenes.Game
         private readonly Dictionary<String, GameObject> projectileTemplateCache = new Dictionary<String, GameObject>();
         private readonly Dictionary<Guid, PlayerBehaviour> playerBehaviours = new Dictionary<Guid, PlayerBehaviour>();
 
-        [SerializeField] private Image backgroundImage;
-        [SerializeField] private Transform objectContainer;
-        [SerializeField] private GameObject templateRootObject;
-        [SerializeField] private GameObject cube;
+        [SerializeField] 
+        private Image backgroundImage;
+        [SerializeField] 
+        private Transform objectContainer;
+        [SerializeField] 
+        private GameObject templateRootObject;
+        [SerializeField] 
+        private LandBehaviour landBehaviour;
 
-        [SerializeField] private DialScriptableObjectScript angleDial;
-        [SerializeField] private DialScriptableObjectScript powerDial;
-        [SerializeField] private GameOverBehaviour gameOverBehaviour;
+        [SerializeField] 
+        private DialScriptableObjectScript angleDial;
+        [SerializeField] 
+        private DialScriptableObjectScript powerDial;
+        [SerializeField] 
+        private GameOverBehaviour gameOverBehaviour;
 
         public void OnRetryClicked()
         {
@@ -259,6 +263,9 @@ namespace Assets.Scripts.Scenes.Game
 
         private void InitWorld(GameState gameState)
         {
+
+            landBehaviour.ReGenerateMap();
+
             SpawnPlayers(gameState.Players);
             SpawnProjectiles(gameState.Projectiles);
 
@@ -268,6 +275,8 @@ namespace Assets.Scripts.Scenes.Game
 
                 SetCurrentPlayer(gameState.CurrentPlayer, gameState);
             }
+
+            Base.Core.Game.Pause();
         }
 
         private void SpawnPlayers(List<Player> players)
@@ -280,11 +289,15 @@ namespace Assets.Scripts.Scenes.Game
 
         private void SpawnPlayer(Player player)
         {
-            var height = GetWorldHeight(player.Position.X);
-
-            var position = new UnityEngine.Vector3(player.Position.X, height + 0.2f, 0);
 
             var catapultTemplate = GetTemplate(catapultTemplateCache, player.Catapult.TemplateReference);
+            Renderer cataRenderer = catapultTemplate.GetComponentInChildren<Renderer>();
+            var catWidth = cataRenderer.bounds.size.x;
+            var height = landBehaviour.CreateFlatSurface(player.Position.X, catWidth + 5);
+
+            var position = new UnityEngine.Vector3(player.Position.X, height + 0.2f, 0); // + cataRenderer.bounds.extents.y + 2
+
+            //var catapultTemplate = GetTemplate(catapultTemplateCache, player.Catapult.TemplateReference);
             var spawnedCatapult = SpawnObject(catapultTemplate, objectContainer, player.Name, position);
 
             var catapultBehaviour = spawnedCatapult.GetComponent<CatapultBehaviour>();
@@ -412,14 +425,6 @@ namespace Assets.Scripts.Scenes.Game
             {
                 Base.Core.Game.State.Projectiles.Remove(projectileBehaviour.Projectile);
             }
-        }
-
-        private Single GetWorldHeight(Single positionX)
-        {
-            // THIS IS A HACK! REMOVE IT!
-            var renderer = this.cube.GetComponent<Renderer>();
-
-            return renderer.bounds.extents.y;
         }
     }
 }

@@ -13,9 +13,16 @@ namespace Assets.Scripts.Scenes.MapTest
         private GameObject objectContainer;
 
         [SerializeField]
-        private LandBehaviour generationBehaviour;
+        private LandBehaviour landBehaviour;
 
         private int numCatas = 0;
+
+
+        private void Awake()
+        {
+            landBehaviour.ReGenerateMap();
+        }
+
         public void SpawnRock()
         {
             var newRock = Instantiate(rockTemplate, objectContainer.transform);
@@ -32,7 +39,7 @@ namespace Assets.Scripts.Scenes.MapTest
             var sizeX = cataRenderer.bounds.size.x;
             for (int pos = -470; pos < 500; pos = pos + 60)
             {
-                var height = generationBehaviour.CreateFlatSurface(pos, sizeX + 5) + cataRenderer.bounds.extents.y + 2;
+                var height = landBehaviour.CreateFlatSurface(pos, sizeX + 5) + cataRenderer.bounds.extents.y + 2;
                 Vector3 spawnPosition = new Vector3(pos, height, 0);
 
                 var newCata = Instantiate(cataTemplate, spawnPosition, Quaternion.identity, objectContainer.transform);
