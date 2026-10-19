@@ -1,3 +1,5 @@
+using TMPro;
+
 using UnityEngine;
 
 namespace Assets.Scripts.Scenes.MainMenu
@@ -9,6 +11,9 @@ namespace Assets.Scripts.Scenes.MainMenu
 
         [SerializeField]
         private GameObject quitSign;
+
+        [SerializeField]
+        private TMP_Text versionText;
 
         public void OnOpenGameMode()
         {
@@ -47,6 +52,8 @@ namespace Assets.Scripts.Scenes.MainMenu
             {
                 this.quitSign.SetActive(false);
             }
+
+            this.versionText.text = $"Version: {Application.version}";
         }
     }
 }
