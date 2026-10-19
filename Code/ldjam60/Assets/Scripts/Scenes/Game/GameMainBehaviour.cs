@@ -205,6 +205,11 @@ namespace Assets.Scripts.Scenes.Game
 
         private void SetCurrentPlayer(Player nextPlayer, GameState gameState)
         {
+            if (nextPlayer.IsDestroyed)
+            {
+                MoveToNextPlayer();
+            }
+
             gameState.CurrentPlayer = nextPlayer;
 
             SetPlayerValues(nextPlayer);
