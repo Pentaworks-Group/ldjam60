@@ -34,15 +34,18 @@ namespace Assets.Scripts.Scenes.Game
         {
             var credits = 0m;
             var name = "";
+            var color = Color.white;
 
             if (player != default)
             {
                 credits = player.Credits;
                 name = player.Name;
+                color = player.Color;
             }
 
             availableCreditsText.text = String.Format("$: {0:#}", credits);
             currentPlayerText.text = name;
+            currentPlayerText.color = color;
         }
     }
 }

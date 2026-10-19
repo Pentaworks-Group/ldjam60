@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Prefabs;
@@ -29,6 +25,7 @@ namespace Assets.Scripts.Scenes.Game
             this.player = player;
 
             this.nameText.text = player.Name;
+            this.nameText.color = player.Color;
 
             this.healthBarBehaviour.Init(0, player.Health, player.Health);
 

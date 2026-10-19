@@ -17,5 +17,6 @@ namespace Assets.Scripts.Core.Models
         public Decimal Credits { get; set; }
         public Single Health { get; set; }
         public Boolean IsDestroyed { get; set; }
+        public UnityEngine.Color Color { get; set; }
     }
 }

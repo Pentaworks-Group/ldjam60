@@ -37,17 +37,22 @@ namespace Assets.Scripts.Scenes.Game
         [SerializeField]
         private GameOverBehaviour gameOverBehaviour;
 
-        public void OnRetryClicked()
-        {
-            StopAllCoroutines();
-            var gameState = Base.Core.Game.State;
-            Base.Core.Game.Start(gameState.GameModeReference);
-        }
 
-        public void OnQuitClicked()
+
+        private static GameMainBehaviour instance;
+
+
+        private void Awake()
         {
-            Base.Core.Game.Stop();
-            Base.Core.Game.ChangeScene(Constants.Scenes.MainMenu);
+            if (instance != null && instance != this)
+            {
+                Debug.LogWarning("Second GameMainBehaviour detected");
+                Destroy(gameObject);
+                return;
+            }
+            instance = this;
+            Base.Core.Game.ExecuteAfterInstantation(Init);
+            templateRootObject.SetActive(false);
         }
 
         public void Fire()
@@ -65,11 +70,19 @@ namespace Assets.Scripts.Scenes.Game
             }
         }
 
-        private void Awake()
+        public void OnRetryClicked()
         {
-            Base.Core.Game.ExecuteAfterInstantation(Init);
-            templateRootObject.SetActive(false);
+            StopAllCoroutines();
+            var gameState = Base.Core.Game.State;
+            Base.Core.Game.Start(gameState.GameModeReference);
         }
+
+        public void OnQuitClicked()
+        {
+            Base.Core.Game.Stop();
+            Base.Core.Game.ChangeScene(Constants.Scenes.MainMenu);
+        }
+
 
         private void Init()
         {
@@ -81,7 +94,6 @@ namespace Assets.Scripts.Scenes.Game
 
             InitWorld(Base.Core.Game.State);
         }
-
         private void AngleDial_OnValueChanged(Single value)
         {
             var currentPlayer = Base.Core.Game.State.CurrentPlayer;
@@ -333,6 +345,11 @@ namespace Assets.Scripts.Scenes.Game
 
             var catapultBehaviour = spawnedCatapult.GetComponent<CatapultBehaviour>();
             var objectBehaviour = spawnedCatapult.GetComponent<ObjectsBehaviour>();
+
+            if (player.Color == default)
+            {
+                player.Color = UnityEngine.Random.ColorHSV();
+            }
 
             catapultBehaviour.Init(player);
             objectBehaviour.Init(player.Health, false, 1);
