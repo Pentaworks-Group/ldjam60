@@ -84,7 +84,7 @@ namespace Assets.Scripts.Core
             for (int botNumber = 0; botNumber < 2; botNumber++)
             {
                 var bot = GenerateBot(players);
-
+                bot.Name = botNumber + " " + bot.Name;
                 players.Add(bot);
             }
 

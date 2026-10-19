@@ -4,7 +4,7 @@
     "TemplateReference": "Default",
     "PossibleFiringPower": {
       "Min": 0,
-      "Max": 100
+      "Max": 150
     },
     "FiringArc": {
       "Min": -90,
