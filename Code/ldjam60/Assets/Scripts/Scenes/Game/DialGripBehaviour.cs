@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.Scenes.Game
 {
-    public class DialGripBehaviour : MonoBehaviour, IDragHandler
+    public class DialGripBehaviour : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
     {
         [SerializeField]
         private DialBehaviour dialBehaviour;
@@ -22,6 +22,8 @@ namespace Assets.Scripts.Scenes.Game
             {
                 return;
             }
+
+            GameFrame.Base.Audio.Effects.Play("Gears");
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -31,6 +33,11 @@ namespace Assets.Scripts.Scenes.Game
                 return;
             }
             RotateDialTowardsPointer(eventData.position);
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            GameFrame.Base.Audio.Effects.Stop();
         }
 
         private void RotateDialTowardsPointer(Vector2 screenPosition)
@@ -59,5 +66,7 @@ namespace Assets.Scripts.Scenes.Game
 
             dialBehaviour.ChangeDialTo(currentPercentage);
         }
+
+
     }
 }

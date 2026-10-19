@@ -72,6 +72,7 @@ namespace Assets.Scripts.Scenes.Game
 
         public void OnRetryClicked()
         {
+            Base.Core.Game.PlayButtonSound();
             StopAllCoroutines();
             var gameState = Base.Core.Game.State;
             Base.Core.Game.Start(gameState.GameModeReference);
@@ -79,6 +80,7 @@ namespace Assets.Scripts.Scenes.Game
 
         public void OnQuitClicked()
         {
+            Base.Core.Game.PlayButtonSound();
             Base.Core.Game.Stop();
             Base.Core.Game.ChangeScene(Constants.Scenes.MainMenu);
         }

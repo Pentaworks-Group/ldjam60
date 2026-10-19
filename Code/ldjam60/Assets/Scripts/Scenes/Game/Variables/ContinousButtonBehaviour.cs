@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.Scenes.Game.Variables
 {
-	public class ContinousButtonBehaviour : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public class ContinousButtonBehaviour : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         [SerializeField]
         private float delay;
@@ -30,11 +30,13 @@ namespace Assets.Scripts.Scenes.Game.Variables
             }
 
             pressed = true;
+            GameFrame.Base.Audio.Effects.Play("Gears");
             StartCoroutine(Repeat());
         }
 
         public void OnPointerUp(PointerEventData eventdata)
         {
+            GameFrame.Base.Audio.Effects.Stop();
             StopAllCoroutines();
             pressed = false;
         }
