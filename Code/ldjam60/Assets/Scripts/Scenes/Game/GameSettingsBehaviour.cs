@@ -1,19 +1,18 @@
 using TMPro;
+
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.UI.CanvasScaler;
 
 namespace Assets.Scripts.Scenes.Game
 {
-	public class GameSettingsBehaviour : MonoBehaviour
-	{
-        [SerializeField] 
+    public class GameSettingsBehaviour : MonoBehaviour
+    {
+        [SerializeField]
         private TMP_InputField numHumansField;
-        [SerializeField] 
+        [SerializeField]
         private TMP_InputField numBotsField;
-        [SerializeField] 
+        [SerializeField]
         private Toggle autoRepeat;
-
 
         private void Awake()
         {
@@ -22,8 +21,10 @@ namespace Assets.Scripts.Scenes.Game
 
         private void Init()
         {
-            if (Base.Core.Game.TryGetCurrentGameMode(out var gameMode))
+            if (Base.Core.Game.State?.GameMode != default)
             {
+                var gameMode = Base.Core.Game.State.GameMode;
+
                 numHumansField.text = gameMode.NumHumans.ToString();
                 numBotsField.text = gameMode.NumBots.ToString();
                 autoRepeat.isOn = gameMode.AutoRepeat;
@@ -51,15 +52,13 @@ namespace Assets.Scripts.Scenes.Game
                 botCount = 0;
             }
 
+            var gameMode = Base.Core.Game.State.GameMode;
 
-            var gameModeReference = Base.Core.Game.State.GameModeReference;
-            if (Base.Core.Game.TryGetCurrentGameMode(out var gameMode))
-            {
-                gameMode.NumHumans = humanCount;
-                gameMode.NumBots = botCount;
-                gameMode.AutoRepeat = autoRepeat.isOn;
-                Base.Core.Game.Start(gameModeReference);
-            }
+            gameMode.NumHumans = humanCount;
+            gameMode.NumBots = botCount;
+            gameMode.AutoRepeat = autoRepeat.isOn;
+
+            Base.Core.Game.Start(gameMode);
 
         }
     }
