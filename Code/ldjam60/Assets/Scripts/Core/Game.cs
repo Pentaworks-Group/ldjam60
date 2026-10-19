@@ -21,14 +21,19 @@ namespace Assets.Scripts.Core
         {
             if (gameModeCache.TryGetValue(gameModeReference, out var gameMode))
             {
-                this.selectedGameMode = gameMode;
-                Start();
+                Start(gameMode);
             }
+        }
+
+        public void Start(GameMode gameMode)
+        {
+            this.selectedGameMode = gameMode;
+            Start();
         }
 
         public bool TryGetCurrentGameMode(out Definitions.GameMode gameMode)
         {
-            return gameModeCache.TryGetValue(State?.GameModeReference, out gameMode);           
+            return gameModeCache.TryGetValue(State?.GameModeReference, out gameMode);
         }
 
         protected override GameState InitializeGameState()
