@@ -76,7 +76,7 @@ namespace Assets.Scripts
         {
             if (destroyed)
             {
-                Debug.LogWarning($"Object already destroyed: {gameObject.GetEntityId()}");
+                //Debug.LogWarning($"Object already destroyed: {gameObject.GetEntityId()}");
                 return;
             }
             destroyed = true;
