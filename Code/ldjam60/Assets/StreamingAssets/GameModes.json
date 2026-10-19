@@ -1,7 +1,7 @@
 [
   {
     "Reference": "default",
-    "Name": "Bob",
+    "Name": "Default",
     "Level": {
       "Reference": "Default",
       "IsReferenced": true
