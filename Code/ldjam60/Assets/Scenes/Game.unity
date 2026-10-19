@@ -1366,7 +1366,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1627006699783850545, guid: 9b14c6ef319091942b4182734b60ab02, type: 3}
       propertyPath: minHeight
-      value: 10
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 4387354016896966131, guid: 9b14c6ef319091942b4182734b60ab02, type: 3}
       propertyPath: m_IsActive

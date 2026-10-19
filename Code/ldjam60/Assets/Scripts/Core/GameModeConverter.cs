@@ -1,19 +1,18 @@
-using System;
-using System.Collections.Generic;
-
 using Assets.Scripts.Constants;
 using Assets.Scripts.Core.Definitions;
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Core.Models.Players;
 using Assets.Scripts.Core.Models.Players.Bots;
-
 using GameFrame.Core.Extensions;
+using System;
+using System.Collections.Generic;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace Assets.Scripts.Core
 {
     public class GameModeConverter
     {
-        
+
         public static List<Type> availableBots = new List<Type>()
         {
             typeof(DefaultBot),
@@ -85,7 +84,7 @@ namespace Assets.Scripts.Core
 
             for (int botNumber = 0; botNumber < 2; botNumber++)
             {
-                var bot = GenerateBot();
+                var bot = GenerateBot(players);
 
                 players.Add(bot);
             }
@@ -117,7 +116,7 @@ namespace Assets.Scripts.Core
             return players;
         }
 
-        private BotPlayer GenerateBot()
+        private BotPlayer GenerateBot(List<Player> players)
         {
             var botCatapult = gameMode.AvailableCatapults.GetRandomEntry();
 
@@ -131,12 +130,42 @@ namespace Assets.Scripts.Core
             botPlayer.Catapult = ConvertCatapult(botCatapult);
             botPlayer.Health = 100;
 
-            var position = UnityEngine.Random.Range(-5, 5);
+            var position = GetBotSpawnPosition(players);
 
             botPlayer.Position = new GameFrame.Core.Math.Vector2(position, 0.5f);
 
             return botPlayer;
         }
+
+        private int GetBotSpawnPosition(List<Player> players)
+        {
+            int position = 0;
+            int attemptsLeft = 100;
+            while (attemptsLeft >= 0)
+            {
+                position = UnityEngine.Random.Range(-6, 6);
+                if (CheckIfPositionAvailable(position, players))
+                {
+                    break;
+                }
+                attemptsLeft--;
+            }
+            return position;
+        }
+
+        private bool CheckIfPositionAvailable(int position, List<Player> players)
+        {
+            foreach (Player player in players)
+            {
+                if (Math.Abs(player.Position.X - position) < 3)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
 
         private Catapult ConvertCatapult(CatapultDefinition definition)
         {
