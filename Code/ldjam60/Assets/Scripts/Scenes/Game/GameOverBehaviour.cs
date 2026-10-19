@@ -30,6 +30,7 @@ namespace Assets.Scripts.Scenes.Game
             }
 
             this.winnerText.text = winnerText;
+            this.winnerText.color = player.Color;
             this.congratuloryText.text = congratuloryText;
             this.replayButtonText.text = replayText;
             this.quitButtonText.text = quitText;
