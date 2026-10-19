@@ -50,6 +50,14 @@ namespace Assets.Scripts.Scenes.Game
             variable.SetPercentage(variable.Percentage + percentage);
         }
 
+        public void ChangeDialTo(float percentage)
+        {
+            if (variable == null)
+                return;
+
+            variable.SetPercentage(percentage);
+        }
+
         public void Increase()
         {
             variable.SetPercentage(variable.Percentage + sensitivty);

@@ -13,11 +13,20 @@ namespace Assets.Scripts.Scenes.Game
         private DialBehaviour dialBehaviour;
 
 
+        private Vector2 rotationCenter;
         private Button targetButton;
 
         void Awake()
         {
             targetButton = GetComponent<Button>();
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (targetButton != null && !targetButton.interactable)
+            {
+                return;
+            }
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -26,13 +35,26 @@ namespace Assets.Scripts.Scenes.Game
             {
                 return;
             }
+            RotateDialTowardsPointer(eventData.position);
+        }
 
-            float xMovement = eventData.delta.x * rotationSpeed;
-            float yMovement = eventData.delta.y * rotationSpeed;
+        private void RotateDialTowardsPointer(Vector2 screenPosition)
+        {
 
-            float totalMovement = xMovement + yMovement;
+            Vector3 worldPos = transform.parent.position;
+            Vector2 dialScreenPos = RectTransformUtility.WorldToScreenPoint(null, worldPos);
 
-            dialBehaviour.ChangeDial(totalMovement);
+
+            Vector2 direction = screenPosition - dialScreenPos;
+
+            float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+
+            targetAngle = Mathf.Clamp(targetAngle, 0f, 180f);
+
+            float currentPercentage = Mathf.InverseLerp(180f, 0f, targetAngle);
+
+            dialBehaviour.ChangeDialTo(currentPercentage);
         }
     }
 }
