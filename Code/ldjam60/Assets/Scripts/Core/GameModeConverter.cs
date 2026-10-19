@@ -33,7 +33,7 @@ namespace Assets.Scripts.Core
                 CurrentScene = "Game",
                 TurnCount = 1,
                 Level = ConvertLevel(gameMode.Level),
-                Players = new List<Player>(),
+                Players = new List<Player>()
             };
 
             gameState.Players.AddRange(LoadPlayers());
@@ -53,66 +53,43 @@ namespace Assets.Scripts.Core
 
         private List<Player> LoadPlayers()
         {
+            var totalPlayers = gameMode.NumHumans + gameMode.NumBots;
+            if (totalPlayers < 2)
+            {
+                gameMode.NumBots += 2 - totalPlayers;
+            }
+
             var players = new List<Player>();
 
-            var playerCatapult = gameMode.AvailableCatapults.GetRandomEntry();
+            AddPlayers(players);
 
-            var humanPlayer = new HumanPlayer()
-            {
-                ID = Guid.NewGuid(),
-                Name = "Player 1",
-                Credits = 100000m,
-                Catapult = ConvertCatapult(playerCatapult),
-                Health = 100,
-                Position = new GameFrame.Core.Math.Vector2(-3, 0)
-            };
-
-            players.Add(humanPlayer);
-
-            //var humanPlayer2 = new HumanPlayer()
-            //{
-            //    ID = Guid.NewGuid(),
-            //    Name = "Player 2",
-            //    Credits = 100000m,
-            //    Catapult = ConvertCatapult(playerCatapult),
-            //    Health = 100,
-            //    Position = new GameFrame.Core.Math.Vector2(3, 0)
-            //};
-
-            //players.Add(humanPlayer2);
-
-            for (int botNumber = 0; botNumber < 2; botNumber++)
+            for (int botNumber = 0; botNumber < gameMode.NumBots; botNumber++)
             {
                 var bot = GenerateBot(players);
                 bot.Name = botNumber + " " + bot.Name;
                 players.Add(bot);
             }
-
-            //var defaultBot = new DefaultBot()
-            //{
-            //    ID = Guid.NewGuid(),
-            //    Name = "Karl Heinz",
-            //    Credits = 100000m,
-            //    Catapult = ConvertCatapult(playerCatapult),
-            //    Health = 100,
-            //    Position = new GameFrame.Core.Math.Vector2(0, 1.5f)
-            //};
-
-            //players.Add(defaultBot);
-
-            //var defaultBot2 = new RandomBot()
-            //{
-            //    ID = Guid.NewGuid(),
-            //    Name = "Klaus Dieter",
-            //    Credits = 100000m,
-            //    Catapult = ConvertCatapult(playerCatapult),
-            //    Health = 100,
-            //    Position = new GameFrame.Core.Math.Vector2(-1.5f, 0)
-            //};
-
-            //players.Add(defaultBot2);
-
             return players;
+        }
+
+        private void AddPlayers(List<Player> players)
+        {
+            for (int i = 0; i < gameMode.NumHumans; i++)
+            {
+                var playerCatapult = gameMode.AvailableCatapults.GetRandomEntry();
+
+                var humanPlayer = new HumanPlayer()
+                {
+                    ID = Guid.NewGuid(),
+                    Name = $"Player {i + 1}",
+                    Credits = 100000m,
+                    Catapult = ConvertCatapult(playerCatapult),
+                    Health = 100,
+                    Position = GetSpawnPosition(players)
+                };
+
+                players.Add(humanPlayer);
+            }
         }
 
         private BotPlayer GenerateBot(List<Player> players)
@@ -128,15 +105,12 @@ namespace Assets.Scripts.Core
             botPlayer.Credits = 100000m;
             botPlayer.Catapult = ConvertCatapult(botCatapult);
             botPlayer.Health = 100;
-
-            var position = GetBotSpawnPosition(players);
-
-            botPlayer.Position = new GameFrame.Core.Math.Vector2(position, 0.5f);
+            botPlayer.Position = GetSpawnPosition(players);
 
             return botPlayer;
         }
 
-        private int GetBotSpawnPosition(List<Player> players)
+        private GameFrame.Core.Math.Vector2 GetSpawnPosition(List<Player> players)
         {
             int position = 0;
             int attemptsLeft = 100;
@@ -149,7 +123,7 @@ namespace Assets.Scripts.Core
                 }
                 attemptsLeft--;
             }
-            return position;
+            return new GameFrame.Core.Math.Vector2(position, 0.5f);
         }
 
         private bool CheckIfPositionAvailable(int position, List<Player> players)

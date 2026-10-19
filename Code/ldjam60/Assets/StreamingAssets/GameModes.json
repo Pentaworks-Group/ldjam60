@@ -12,6 +12,8 @@
         "Reference": "Default",
         "IsReferenced": true
       }
-    ]
+    ],
+    "NumHumans": 1,
+    "NumBots": 2
   }
 ]

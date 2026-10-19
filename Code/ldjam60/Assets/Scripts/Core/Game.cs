@@ -26,6 +26,11 @@ namespace Assets.Scripts.Core
             }
         }
 
+        public bool TryGetCurrentGameMode(out Definitions.GameMode gameMode)
+        {
+            return gameModeCache.TryGetValue(State?.GameModeReference, out gameMode);           
+        }
+
         protected override GameState InitializeGameState()
         {
             var gameMode = this.selectedGameMode;

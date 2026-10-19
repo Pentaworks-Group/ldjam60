@@ -39,8 +39,8 @@ namespace Assets.Scripts.Scenes.Game
 
         public void OnRetryClicked()
         {
+            StopAllCoroutines();
             var gameState = Base.Core.Game.State;
-
             Base.Core.Game.Start(gameState.GameModeReference);
         }
 
@@ -136,7 +136,7 @@ namespace Assets.Scripts.Scenes.Game
 
                     var rigidbody = projectileBehaviour.GetComponent<Rigidbody>();
 
-                    Debug.Log($"Firing at angle: {playerBehaviour.Player.Catapult.FiringAngle}!");
+                    //Debug.Log($"Firing at angle: {playerBehaviour.Player.Catapult.FiringAngle}!");
 
                     var catapultRotation = playerBehaviour.transform.rotation;
 
@@ -263,8 +263,18 @@ namespace Assets.Scripts.Scenes.Game
 
         private void ShowGameOver(Player winner)
         {
+            if (Base.Core.Game.TryGetCurrentGameMode(out var gameMode) && gameMode.AutoRepeat)
+            {
+                StartCoroutine(DelayedRetry(2f));
+            }
             this.gameOverBehaviour.SetWinner(winner);
             this.gameOverBehaviour.Show();
+        }
+
+        private System.Collections.IEnumerator DelayedRetry(float delaySeconds)
+        {
+            yield return new WaitForSeconds(delaySeconds);
+            OnRetryClicked();
         }
 
         private void LoadTemplates()
