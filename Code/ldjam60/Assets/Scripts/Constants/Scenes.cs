@@ -47,7 +47,6 @@ namespace Assets.Scripts.Constants
             }
         }
 
-
         public const String CreditsName = "Credits";
         private static Scene credits;
         public static Scene Credits
@@ -63,6 +62,24 @@ namespace Assets.Scripts.Constants
                 }
 
                 return credits;
+            }
+        }
+
+        public const String GameModeEditName = "GameModeEdit";
+        private static Scene gameModeEdit;
+        public static Scene GameModeEdit
+        {
+            get
+            {
+                if (gameModeEdit == default)
+                {
+                    gameModeEdit = new Scene()
+                    {
+                        Name = GameModeEditName,
+                    };
+                }
+
+                return gameModeEdit;
             }
         }
 
@@ -102,12 +119,12 @@ namespace Assets.Scripts.Constants
             }
         }
 
-
         public static List<Scene> GetGameScenes()
         {
             return new List<Scene>()
             {
                 MainMenu,
+                GameModeEdit,
                 Game,
                 Credits,
             };
@@ -117,7 +134,7 @@ namespace Assets.Scripts.Constants
         {
             return new List<Scene>()
             {
-                PhysicsTest, 
+                PhysicsTest,
                 MapTest,
             };
         }

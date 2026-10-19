@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 72941146}
   - component: {fileID: 72941145}
   m_Layer: 5
-  m_Name: InputField (TMP)
+  m_Name: BotAmountInputField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1124,7 +1124,20 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 780540583}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1150296197}
+        m_TargetAssemblyTypeName: Assets.Scripts.Scenes.GameModeEdit.GameModeEditBehaviour,
+          Assembly-CSharp
+        m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &780540583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1388,7 +1401,7 @@ GameObject:
   - component: {fileID: 891339411}
   - component: {fileID: 891339410}
   m_Layer: 5
-  m_Name: InputField (TMP)
+  m_Name: PlayerAmountInputField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1462,14 +1475,14 @@ MonoBehaviour:
   m_VerticalScrollbarEventHandler: {fileID: 0}
   m_LayoutGroup: {fileID: 0}
   m_ScrollSensitivity: 1
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 2
   m_RegexValue: 
   m_GlobalPointSize: 14
   m_CharacterLimit: 0
@@ -2201,7 +2214,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08df3778acdb0924683cc4a4f0b77b8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Scenes.GameMode.GameModeBehaviour
-  SubtitleText: {fileID: 0}
+  SubtitleText: {fileID: 658801844}
+  playerAmoutInput: {fileID: 891339410}
+  botAmoutInput: {fileID: 72941145}
+  autoReplayToggle: {fileID: 350197957}
 --- !u!1 &1151888217
 GameObject:
   m_ObjectHideFlags: 0
@@ -3011,7 +3027,20 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1612815898}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1150296197}
+        m_TargetAssemblyTypeName: Assets.Scripts.Scenes.GameModeEdit.GameModeEditBehaviour,
+          Assembly-CSharp
+        m_MethodName: OnBack
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1612815898
 MonoBehaviour:
   m_ObjectHideFlags: 0

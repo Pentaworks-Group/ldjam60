@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 using Assets.Scripts.Core.Definitions;
@@ -16,6 +17,15 @@ namespace Assets.Scripts.Core
         private readonly DefinitionCache<Definitions.ProjectileTypeDefinition> projectileCache = new DefinitionCache<Definitions.ProjectileTypeDefinition>();
 
         private GameMode selectedGameMode;
+
+        public override void Quit()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit()
+#endif
+        }
 
         public void Start(String gameModeReference)
         {
@@ -81,6 +91,11 @@ namespace Assets.Scripts.Core
             yield return new DefinitionLoader<ProjectileTypeDefinition>(this.projectileCache).LoadDefinitions("ProjectileTypes.json");
             yield return new SimpleReferenceLoader<CatapultDefinition>(this.catapultCache, this.projectileCache).LoadDefinitions("Catapults.json");
             yield return new SimpleReferenceLoader<GameMode>(this.gameModeCache, this.catapultCache, this.levelCache).LoadDefinitions("GameModes.json");
+        }
+
+        public List<GameMode> GetGameModes()
+        {
+            return this.gameModeCache.Values.ToList();
         }
     }
 }

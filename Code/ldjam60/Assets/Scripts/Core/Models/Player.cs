@@ -7,8 +7,6 @@ namespace Assets.Scripts.Core.Models
     public abstract class Player
     {
         public abstract Boolean IsHuman { get; }
-        private Boolean isActive;
-        public Boolean IsActive { get => isActive; }
 
         public Guid ID { get; set; }
         public String Name { get; set; }

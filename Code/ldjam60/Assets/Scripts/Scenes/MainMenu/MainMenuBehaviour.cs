@@ -6,10 +6,11 @@ namespace Assets.Scripts.Scenes.MainMenu
 	{
         [SerializeField]
         private GameObject howTo;
+
         public void OnOpenGameMode()
         {
             Base.Core.Game.PlayButtonSound();
-            Base.Core.Game.Start();
+            Base.Core.Game.ChangeScene(Constants.Scenes.GameModeEdit);
         }
 
         public void ShowHowto()
@@ -24,5 +25,15 @@ namespace Assets.Scripts.Scenes.MainMenu
             howTo.SetActive(false);
         }
 
+        public void ShowCredits()
+        {
+            Base.Core.Game.PlayButtonSound();
+            Base.Core.Game.ChangeScene(Constants.Scenes.Credits);
+        }
+
+        public void OnQuit()
+        {
+            Base.Core.Game.Quit();
+        }
     }
 }
