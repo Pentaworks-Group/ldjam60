@@ -9,8 +9,12 @@ namespace Assets.Scripts.Prefabs
 		[SerializeField]
 		private List<Button> interactables = new();
 
+        private void Awake()
+        {
+            DisableUI();
+        }
 
-		public void EnableUI()
+        public void EnableUI()
 		{
 			foreach (var button in interactables)
 			{
