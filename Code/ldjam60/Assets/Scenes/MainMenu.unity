@@ -1817,6 +1817,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Scenes.MainMenu.MainMenuBehaviour
   howTo: {fileID: 1100866135}
   quitSign: {fileID: 392271770}
+  versionText: {fileID: 157644434}
 --- !u!1 &1508803745
 GameObject:
   m_ObjectHideFlags: 0
