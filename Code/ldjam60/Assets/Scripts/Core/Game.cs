@@ -23,27 +23,14 @@ namespace Assets.Scripts.Core
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
-            // Application.Quit();
+            UnityEngine.Application.Quit();
 #endif
-        }
-
-        public void Start(String gameModeReference)
-        {
-            if (gameModeCache.TryGetValue(gameModeReference, out var gameMode))
-            {
-                Start(gameMode);
-            }
         }
 
         public void Start(GameMode gameMode)
         {
             this.selectedGameMode = gameMode;
             Start();
-        }
-
-        public bool TryGetCurrentGameMode(out Definitions.GameMode gameMode)
-        {
-            return gameModeCache.TryGetValue(State?.GameModeReference, out gameMode);
         }
 
         protected override GameState InitializeGameState()

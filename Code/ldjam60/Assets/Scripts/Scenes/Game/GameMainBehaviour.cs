@@ -1,14 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 using Assets.Scripts.Core;
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Core.Models.Players;
 using Assets.Scripts.Map;
 using Assets.Scripts.Prefabs;
+
 using GameFrame.Core.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using UnityEngine;
 using UnityEngine.UI;
+
 using FrameVector3 = GameFrame.Core.Math.Vector3;
 
 namespace Assets.Scripts.Scenes.Game
@@ -73,7 +77,7 @@ namespace Assets.Scripts.Scenes.Game
             Base.Core.Game.PlayButtonSound();
             StopAllCoroutines();
             var gameState = Base.Core.Game.State;
-            Base.Core.Game.Start(gameState.GameModeReference);
+            Base.Core.Game.Start(gameState.GameMode);
         }
 
         public void OnQuitClicked()
@@ -300,10 +304,11 @@ namespace Assets.Scripts.Scenes.Game
 
         private void ShowGameOver(Player winner)
         {
-            if (Base.Core.Game.TryGetCurrentGameMode(out var gameMode) && gameMode.AutoRepeat)
+            if (Base.Core.Game.State.GameMode.AutoRepeat)
             {
                 StartCoroutine(DelayedRetry(2f));
             }
+
             this.gameOverBehaviour.SetWinner(winner);
             this.gameOverBehaviour.Show();
         }

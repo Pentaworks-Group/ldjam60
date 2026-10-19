@@ -1,11 +1,14 @@
+using System;
+using System.Collections.Generic;
+
 using Assets.Scripts.Constants;
 using Assets.Scripts.Core.Definitions;
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Core.Models.Players;
 using Assets.Scripts.Core.Models.Players.Bots;
+
 using GameFrame.Core.Extensions;
-using System;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace Assets.Scripts.Core
@@ -30,7 +33,7 @@ namespace Assets.Scripts.Core
         {
             var gameState = new GameState()
             {
-                GameModeReference = gameMode.Reference,
+                GameMode = gameMode,
                 CurrentScene = "Game",
                 TurnCount = 1,
                 Level = ConvertLevel(gameMode.Level),
@@ -67,7 +70,7 @@ namespace Assets.Scripts.Core
             AddHumans(players, availableSpawnPositions);
 
             AddBots(availableSpawnPositions, players);
-            
+
             players.Shuffle();
 
             return players;
