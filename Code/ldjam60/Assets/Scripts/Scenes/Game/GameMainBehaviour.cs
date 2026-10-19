@@ -272,7 +272,6 @@ namespace Assets.Scripts.Scenes.Game
                 SetCurrentPlayer(gameState.CurrentPlayer, gameState);
             }
 
-            Base.Core.Game.Pause();
         }
 
         private void SpawnPlayers(List<Player> players)
@@ -289,7 +288,7 @@ namespace Assets.Scripts.Scenes.Game
             var catapultTemplate = GetTemplate(catapultTemplateCache, player.Catapult.TemplateReference);
             Renderer cataRenderer = catapultTemplate.GetComponentInChildren<Renderer>();
             var catWidth = cataRenderer.bounds.size.x;
-            var height = landBehaviour.CreateFlatSurface(player.Position.X, catWidth + 5);
+            var height = landBehaviour.CreateFlatSurface(player.Position.X, catWidth * 1.08f);
 
             var position = new UnityEngine.Vector3(player.Position.X, height + 0.2f, 0); // + cataRenderer.bounds.extents.y + 2
 

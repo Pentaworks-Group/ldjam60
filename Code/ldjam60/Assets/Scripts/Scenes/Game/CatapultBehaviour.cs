@@ -15,9 +15,12 @@ namespace Assets.Scripts.Scenes.Game
 {
     public class CatapultBehaviour : MonoBehaviour
     {
-        [SerializeField] TMP_Text nameText;
-        [SerializeField] GameObject spriteContainer;
-        [SerializeField] HealthBarBehaviour healthBarBehaviour;
+        [SerializeField] 
+        TMP_Text nameText;
+        [SerializeField] 
+        GameObject spriteContainer;
+        [SerializeField] 
+        HealthBarBehaviour healthBarBehaviour;
 
         private Player player;
 
@@ -28,6 +31,14 @@ namespace Assets.Scripts.Scenes.Game
             this.nameText.text = player.Name;
 
             this.healthBarBehaviour.Init(0, player.Health, player.Health);
+
+
+            var rb = GetComponent<Rigidbody>();
+
+            Vector3 currentCoM = rb.centerOfMass;
+            float localHeight = GetComponentInChildren<MeshFilter>().sharedMesh.bounds.size.y;
+            float shiftAmount = localHeight * 0.10f;
+            rb.centerOfMass = new Vector3(currentCoM.x, currentCoM.y - shiftAmount, currentCoM.z);
         }
 
         private void Update()

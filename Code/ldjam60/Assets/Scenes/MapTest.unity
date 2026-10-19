@@ -480,7 +480,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1000}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1555,7 +1555,7 @@ MonoBehaviour:
   rockTemplate: {fileID: 2055588748}
   cataTemplate: {fileID: 1995831631}
   objectContainer: {fileID: 1204316150}
-  generationBehaviour: {fileID: 2146407566}
+  landBehaviour: {fileID: 2146407566}
 --- !u!1 &2098837180
 GameObject:
   m_ObjectHideFlags: 0
@@ -1757,6 +1757,14 @@ PrefabInstance:
     - target: {fileID: 133428105684544830, guid: 9b14c6ef319091942b4182734b60ab02, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1562863600005561712, guid: 9b14c6ef319091942b4182734b60ab02, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1562863600005561712, guid: 9b14c6ef319091942b4182734b60ab02, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 1627006699783850545, guid: 9b14c6ef319091942b4182734b60ab02, type: 3}
       propertyPath: MapSize.x

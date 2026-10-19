@@ -35,8 +35,8 @@ namespace Assets.Scripts.Map
         private Core.Models.Map currentMap;
         private List<Vector2> boundaryPoints;
 
-        private float relativeMapWidht = 1;
-        private float relativeMapHeight = 1;
+        private float scaleX = 1;
+        private float scaleY = 1;
 
 
 
@@ -44,9 +44,9 @@ namespace Assets.Scripts.Map
 
         public float CreateFlatSurface(float centerCoordinate, float width)
         {
-            Debug.Log($"Creating surface at {centerCoordinate} with width {width}");
             int centerX = GetIndexFromCoordinateX(centerCoordinate);
-            int half = Mathf.CeilToInt((width * relativeMapWidht) / 2);
+            int half = Mathf.CeilToInt((width / scaleX) / 2);
+            //Debug.Log($"Creating surface at {centerCoordinate} with width {width} -> {centerX}, {half}");
             int start = Mathf.Max(0, centerX - half);
             int end = Mathf.Min(currentMap.Size.X - 1, centerX + half);
 
@@ -87,7 +87,7 @@ namespace Assets.Scripts.Map
                 }
             }
 
-            //RebuildMesh();
+            RebuildMesh();
 
             return GetCoordinateFromIndexY(height);
         }
@@ -96,7 +96,7 @@ namespace Assets.Scripts.Map
         {
             var start = transform.position.x;
             var diff = coordinate - start;
-            var rawIndex = diff / relativeMapWidht;
+            var rawIndex = diff / scaleX;
             return (int)rawIndex;
         }
 
@@ -104,7 +104,7 @@ namespace Assets.Scripts.Map
         private float GetCoordinateFromIndexY(float index)
         {
             var y = transform.position.y;
-            var relativeY = index * relativeMapHeight;
+            var relativeY = index * scaleY;
             var finalY = y + relativeY;
             return finalY;
         }
@@ -116,47 +116,33 @@ namespace Assets.Scripts.Map
 
         private void GenerateMap()
         {
-            if (Base.Core.Game.State.Level.Map == null)
+            if (Base.Core.Game.State?.Level?.Map == null)
             {
-                Base.Core.Game.State.Level.Map = new Core.Models.Map()
+                currentMap = new Core.Models.Map()
                 {
                     Size = MapSize,
                     TextureMap = GenerateTestEnvironment(1, MapSize)
                 };
+                if (Base.Core.Game.State?.Level != null)
+                {
+                    Base.Core.Game.State.Level.Map = currentMap;
+                }
             }
 
-            currentMap = Base.Core.Game.State.Level.Map;
+
+            scaleX = mapWorldWidht / currentMap.Size.X;
+            scaleY = mapWorldHeight / currentMap.Size.Y;
 
             //ExportToPNG(currentMap.TextureMap, "environmentPng.png");
 
-            //Physics.gravity = new UnityVector3(0, 3 * Physics.gravity.y, 0);
-
-
-
-            //int xSize = currentMap.Size.X;
-            //int ySize = currentMap.Size.Y;
-            //this.gameObject.transform.position = new UnityVector3(-xSize / 2, -ySize / 2, 0);
 
             RebuildMesh();
-
-            //var renderer = GetComponent<Renderer>();
-            //var sizeX = renderer.bounds.size.x;
-            //this.relativeMapWidht = currentMap.Size.X / sizeX;
-
-
-            //this.relativeMapHeight = (currentMap.Size.Y / currentMap.Size.X) * relativeMapWidht;
-
-            this.relativeMapWidht = currentMap.Size.X / mapWorldWidht;
-            this.relativeMapHeight = currentMap.Size.Y / mapWorldHeight;
         }
 
         private void RebuildMesh()
         {
-            Debug.Log("Rebuild Mesh");
             boundaryPoints = GetBoundingPoints(currentMap, 1);
 
-            float scaleX = mapWorldWidht / currentMap.Size.X;
-            float scaleY = mapWorldHeight / currentMap.Size.Y;
 
             List<UnityVector3> vertices = new List<UnityVector3>();
             List<int> triangles = new List<int>();
@@ -164,8 +150,8 @@ namespace Assets.Scripts.Map
 
             foreach (var p in boundaryPoints)
             {
-                //vertices.Add(new UnityVector3(p.X * scaleX, p.Y * scaleY, 0));
-                vertices.Add(new UnityVector3(p.X, p.Y, 0));
+                vertices.Add(new UnityVector3(p.X * scaleX, p.Y * scaleY, 0));
+                //vertices.Add(new UnityVector3(p.X, p.Y, 0));
             }
             triangles.AddRange(GetTriangleList(boundaryPoints));
 
@@ -177,10 +163,6 @@ namespace Assets.Scripts.Map
             mesh.name = "MeshGeneratedByScript";
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
-
-            Debug.Log($"Vertices: {vertices.Count}");
-            Debug.Log($"Triangle indices: {triangles.Count}");
-            Debug.Log($"Mesh bounds: {mesh.bounds}");
 
             var meshFilter = GetComponent<MeshFilter>();
             meshFilter.sharedMesh = mesh;
