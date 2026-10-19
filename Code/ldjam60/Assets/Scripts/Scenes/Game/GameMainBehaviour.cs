@@ -37,10 +37,7 @@ namespace Assets.Scripts.Scenes.Game
         [SerializeField]
         private GameOverBehaviour gameOverBehaviour;
 
-
-
         private static GameMainBehaviour instance;
-
 
         private void Awake()
         {
@@ -84,7 +81,6 @@ namespace Assets.Scripts.Scenes.Game
             Base.Core.Game.Stop();
             Base.Core.Game.ChangeScene(Constants.Scenes.MainMenu);
         }
-
 
         private void Init()
         {
