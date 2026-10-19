@@ -148,7 +148,7 @@ namespace Assets.Scripts.Scenes.Game
 
             if (availablePlayers.Count <= 1)
             {
-                ShowGameOver(Base.Core.Game.State.CurrentPlayer);
+                ShowGameOver(availablePlayers.First());
                 gameState.CurrentPlayer = default;
 
                 return;
@@ -402,19 +402,15 @@ namespace Assets.Scripts.Scenes.Game
                     playerBehaviour.Deactivate();
                 }    
 
-                if (Base.Core.Game.State.CurrentPlayer != playerBehaviour.Player)
-                {
-                    if (this.playerBehaviours.TryGetValue(Base.Core.Game.State.CurrentPlayer.ID, out var activePlayerBehaviour))
-                    {
-                        activePlayerBehaviour.Deactivate();
-                    }
-                }
-
                 this.playerBehaviours.Remove(playerBehaviour.Player.ID);
 
                 if (this.playerBehaviours.Count == 1)
                 {
-                    ShowGameOver(this.playerBehaviours.Values.First().Player);
+                    var lastPlayer = this.playerBehaviours.Values.First();
+                    
+                    lastPlayer.Deactivate();                    
+
+                    ShowGameOver(lastPlayer.Player);
                 }
             }
 
