@@ -2,10 +2,13 @@ using UnityEngine;
 
 namespace Assets.Scripts.Scenes.MainMenu
 {
-	public class MainMenuBehaviour : GameFrame.Core.UI.Scripts.Menu.BaseMenuBehaviour
-	{
+    public class MainMenuBehaviour : GameFrame.Core.UI.Scripts.Menu.BaseMenuBehaviour
+    {
         [SerializeField]
         private GameObject howTo;
+
+        [SerializeField]
+        private GameObject quitSign;
 
         public void OnOpenGameMode()
         {
@@ -34,6 +37,16 @@ namespace Assets.Scripts.Scenes.MainMenu
         public void OnQuit()
         {
             Base.Core.Game.Quit();
+        }
+
+        private void Awake()
+        {
+            if (Application.platform == RuntimePlatform.WebGLPlayer
+                || Application.platform == RuntimePlatform.Android
+                || Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                this.quitSign.SetActive(false);
+            }
         }
     }
 }
