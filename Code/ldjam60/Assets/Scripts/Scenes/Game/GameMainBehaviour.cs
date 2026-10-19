@@ -204,14 +204,14 @@ namespace Assets.Scripts.Scenes.Game
             {
                 if (lastActivePlayer.IsActive)
                 {
-                    Debug.LogWarning($"Last player still active: {lastActivePlayer.name}: {lastActivePlayer.IsActive} {lastActivePlayer.Player.ID}");
-                    String txt = "availablePlayers\n";
-                    foreach (var player in playerBehaviours.Values)
-                    {
-                        var t = $"{player.IsActive}: {player.Player.IsDestroyed}  {player.Player.Name}   {player.Player.ID}\n";
-                        txt += t;
-                    }
-                    Debug.LogWarning(txt);
+                    //Debug.LogWarning($"Last player still active: {lastActivePlayer.name}: {lastActivePlayer.IsActive} {lastActivePlayer.Player.ID}");
+                    //String txt = "availablePlayers\n";
+                    //foreach (var player in playerBehaviours.Values)
+                    //{
+                    //    var t = $"{player.IsActive}: {player.Player.IsDestroyed}  {player.Player.Name}   {player.Player.ID}\n";
+                    //    txt += t;
+                    //}
+                    //Debug.LogWarning(txt);
                     return;
                 }
                 var currentPlayer = gameState.CurrentPlayer;
