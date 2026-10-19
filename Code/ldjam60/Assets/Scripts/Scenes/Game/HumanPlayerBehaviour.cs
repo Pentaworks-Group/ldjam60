@@ -31,10 +31,8 @@ namespace Assets.Scripts.Scenes.Game
 
         public override Player Player => this.humanPlayer;
 
-        public override void EnableInput()
-        {
-            base.EnableInput();
-
+        protected override void OnActivate()
+        {            
             fireAction.performed += FireAction_performed;
 
             aimLeftAction.Hook(onStarted: AimLeftAction_Started, onCancelled: AimLeftAction_Cancelled);
@@ -44,10 +42,8 @@ namespace Assets.Scripts.Scenes.Game
             decreaseStrengthAction.Hook(onStarted: DecreasePowerAction_Started, onCancelled: DecreasePowerAction_Cancelled);
         }
 
-        public override void DisableInput()
+        protected override void OnDeactivate()
         {
-            base.DisableInput();
-
             fireAction.performed -= FireAction_performed;
 
             aimLeftAction.UnHook(onStarted: AimLeftAction_Started, onCancelled: AimLeftAction_Cancelled);

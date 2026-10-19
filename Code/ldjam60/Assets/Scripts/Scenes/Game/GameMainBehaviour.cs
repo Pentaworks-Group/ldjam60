@@ -110,6 +110,7 @@ namespace Assets.Scripts.Scenes.Game
                         Type = projectileType,
                         Position = position,
                         Force = FrameVector3.Zero,
+                        Source = playerBehaviour.Player
                     };
 
                     var projectileBehaviour = SpawnProjectile(projectile);
@@ -132,7 +133,11 @@ namespace Assets.Scripts.Scenes.Game
                     playerBehaviour.Player.Credits -= projectileType.Cost;
 
                     DisableInput();
-                    playerBehaviour.DisableInput();
+
+                    playerBehaviour.Deactivate();
+
+                    playerBehaviour.AngleChanged -= PlayerBehaviour_AngleChanged;
+                    playerBehaviour.PowerChanged -= PlayerBehaviour_PowerChanged;
                 }
             }
         }
@@ -141,23 +146,13 @@ namespace Assets.Scripts.Scenes.Game
         {
             var gameState = Base.Core.Game.State;
 
-            DisableInput();
-
-            if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var behaviour))
-            {
-                behaviour.DisableInput();
-
-                behaviour.AngleChanged -= PlayerBehaviour_AngleChanged;
-                behaviour.PowerChanged -= PlayerBehaviour_PowerChanged;
-            }
-
             var nextPlayer = default(Player);
 
             var availablePlayers = gameState.Players.Where(p => !p.IsDestroyed).ToList();
 
             if (availablePlayers.Count <= 1)
             {
-                ShowGameOver(Base.Core.Game.State.CurrentPlayer);
+                ShowGameOver(availablePlayers.First());
                 gameState.CurrentPlayer = default;
 
                 return;
@@ -189,21 +184,22 @@ namespace Assets.Scripts.Scenes.Game
             SetCurrentPlayer(nextPlayer, gameState);
         }
 
-        private void SetCurrentPlayer(Player nextPlayer, GameState gameState = default)
+        private void SetCurrentPlayer(Player nextPlayer, GameState gameState)
         {
             gameState.CurrentPlayer = nextPlayer;
 
             SetPlayerValues(nextPlayer);
 
-            if (nextPlayer.IsHuman)
+            if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var nextPlayerBehaviour))
             {
-                EnableInput();
+                nextPlayerBehaviour.Activate();
 
-                if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var nextPlayerBehaviour))
+                nextPlayerBehaviour.AngleChanged += PlayerBehaviour_AngleChanged;
+                nextPlayerBehaviour.PowerChanged += PlayerBehaviour_PowerChanged;
+
+                if (nextPlayer.IsHuman)
                 {
-                    nextPlayerBehaviour.AngleChanged += PlayerBehaviour_AngleChanged;
-                    nextPlayerBehaviour.PowerChanged += PlayerBehaviour_PowerChanged;
-                    nextPlayerBehaviour.EnableInput();
+                    EnableInput();                    
                 }
             }
         }
@@ -413,11 +409,21 @@ namespace Assets.Scripts.Scenes.Game
             if (destroyedGameObject.TryGetComponent<PlayerBehaviour>(out var playerBehaviour))
             {
                 playerBehaviour.Player.IsDestroyed = true;
+
+                if (playerBehaviour.IsActive)
+                {
+                    playerBehaviour.Deactivate();
+                }    
+
                 this.playerBehaviours.Remove(playerBehaviour.Player.ID);
 
                 if (this.playerBehaviours.Count == 1)
                 {
-                    ShowGameOver(this.playerBehaviours.Values.First().Player);
+                    var lastPlayer = this.playerBehaviours.Values.First();
+                    
+                    lastPlayer.Deactivate();                    
+
+                    ShowGameOver(lastPlayer.Player);
                 }
             }
 

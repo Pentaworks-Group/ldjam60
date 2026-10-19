@@ -6,6 +6,9 @@ namespace Assets.Scripts.Core.Models.Players
     {
         public override Boolean IsHuman => false;
 
-        public Player LastTarget { get; set; }
+        public Player Target { get; set; }
+
+        public abstract void SelectTarget();
+        public abstract void CalculateAngleAndPower(out Single targetAngle, out Single targetPower);
     }
 }
