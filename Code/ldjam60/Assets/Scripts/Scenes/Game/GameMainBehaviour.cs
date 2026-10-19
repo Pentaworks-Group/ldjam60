@@ -38,6 +38,7 @@ namespace Assets.Scripts.Scenes.Game
         private GameOverBehaviour gameOverBehaviour;
 
         private static GameMainBehaviour instance;
+        private PlayerBehaviour lastActivePlayer;
 
         private void Awake()
         {
@@ -173,6 +174,17 @@ namespace Assets.Scripts.Scenes.Game
             }
         }
 
+        private void DelayedMoveToNextPlayer()
+        {
+            StartCoroutine(DelayedMoveToNextPlayerEnummerator());
+        }
+
+        private System.Collections.IEnumerator DelayedMoveToNextPlayerEnummerator()
+        {
+            yield return null;
+            MoveToNextPlayer();
+        }
+
         private void MoveToNextPlayer()
         {
             var gameState = Base.Core.Game.State;
@@ -190,6 +202,9 @@ namespace Assets.Scripts.Scenes.Game
             }
             else
             {
+                if (lastActivePlayer.IsActive) {
+                    Debug.LogWarning("Last player still active");
+                }
                 var currentPlayer = gameState.CurrentPlayer;
                 var currentIndex = availablePlayers.IndexOf(currentPlayer);
                 var startIndex = currentIndex;
@@ -229,6 +244,7 @@ namespace Assets.Scripts.Scenes.Game
             if (playerBehaviours.TryGetValue(gameState.CurrentPlayer.ID, out var nextPlayerBehaviour))
             {
                 nextPlayerBehaviour.Activate();
+                lastActivePlayer = nextPlayerBehaviour;
 
                 nextPlayerBehaviour.AngleChanged += PlayerBehaviour_AngleChanged;
                 nextPlayerBehaviour.PowerChanged += PlayerBehaviour_PowerChanged;
@@ -405,7 +421,7 @@ namespace Assets.Scripts.Scenes.Game
         {
             behaviour.MoveFinished -= ProjectileBehaviour_MoveFinished;
 
-            MoveToNextPlayer();
+            DelayedMoveToNextPlayer();
         }
 
         private PlayerBehaviour SetPlayerBehaviour(Player player, GameObject catapult)
@@ -479,7 +495,7 @@ namespace Assets.Scripts.Scenes.Game
                 }
                 if (Base.Core.Game.State.CurrentPlayer.ID == playerBehaviour.Player.ID)
                 {
-                    MoveToNextPlayer();
+                    DelayedMoveToNextPlayer();
                 }
             }
 
