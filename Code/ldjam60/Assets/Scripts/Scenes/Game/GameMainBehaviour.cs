@@ -202,8 +202,17 @@ namespace Assets.Scripts.Scenes.Game
             }
             else
             {
-                if (lastActivePlayer.IsActive) {
-                    Debug.LogWarning("Last player still active");
+                if (lastActivePlayer.IsActive)
+                {
+                    //Debug.LogWarning($"Last player still active: {lastActivePlayer.name}: {lastActivePlayer.IsActive} {lastActivePlayer.Player.ID}");
+                    //String txt = "availablePlayers\n";
+                    //foreach (var player in playerBehaviours.Values)
+                    //{
+                    //    var t = $"{player.IsActive}: {player.Player.IsDestroyed}  {player.Player.Name}   {player.Player.ID}\n";
+                    //    txt += t;
+                    //}
+                    //Debug.LogWarning(txt);
+                    return;
                 }
                 var currentPlayer = gameState.CurrentPlayer;
                 var currentIndex = availablePlayers.IndexOf(currentPlayer);
@@ -493,7 +502,7 @@ namespace Assets.Scripts.Scenes.Game
 
                     ShowGameOver(lastPlayer.Player);
                 }
-                if (Base.Core.Game.State.CurrentPlayer.ID == playerBehaviour.Player.ID)
+                if (playerBehaviour?.Player != default && Base.Core.Game.State.CurrentPlayer.ID == playerBehaviour.Player.ID)
                 {
                     DelayedMoveToNextPlayer();
                 }

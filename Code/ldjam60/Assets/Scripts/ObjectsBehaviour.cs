@@ -13,6 +13,7 @@ namespace Assets.Scripts
 
         private float health;
         private bool indestructable;
+        private bool destroyed = false;
 
         public UnityEvent<GameObject> ObjectDestroyed = new UnityEvent<GameObject>();
 
@@ -73,6 +74,12 @@ namespace Assets.Scripts
 
         private void OnObjectDestroyed(GameObject gameObject)
         {
+            if (destroyed)
+            {
+                //Debug.LogWarning($"Object already destroyed: {gameObject.GetEntityId()}");
+                return;
+            }
+            destroyed = true;
             if (TryGetComponent<CatapultBehaviour>(out var _))
             {
                 GameFrame.Base.Audio.Effects.Play("Katapult_Destroy");
