@@ -6,6 +6,7 @@ using Assets.Scripts.Core.Models.Players.Bots;
 using GameFrame.Core.Extensions;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.Scripts.Core
 {
@@ -59,20 +60,38 @@ namespace Assets.Scripts.Core
                 gameMode.NumBots += 2 - totalPlayers;
             }
 
+            List<int> availableSpawnPositions = InitializeSpawnPool();
+
             var players = new List<Player>();
 
-            AddPlayers(players);
+            AddHumans(players, availableSpawnPositions);
 
-            for (int botNumber = 0; botNumber < gameMode.NumBots; botNumber++)
-            {
-                var bot = GenerateBot(players);
-                bot.Name = botNumber + " " + bot.Name;
-                players.Add(bot);
-            }
+            AddBots(availableSpawnPositions, players);
             return players;
         }
 
-        private void AddPlayers(List<Player> players)
+        private void AddBots(List<int> availableSpawnPositions, List<Player> players)
+        {
+            for (int botNumber = 0; botNumber < gameMode.NumBots; botNumber++)
+            {
+                var bot = GenerateBot(availableSpawnPositions);
+                players.Add(bot);
+            }
+        }
+
+        private List<int> InitializeSpawnPool()
+        {
+            List<int> availableSpawnPositions = new List<int>();
+            availableSpawnPositions.Clear();
+
+            for (int pos = -7; pos <= 7; pos++)
+            {
+                availableSpawnPositions.Add(pos);
+            }
+            return availableSpawnPositions;
+        }
+
+        private void AddHumans(List<Player> players, List<int> availableSpawnPositions)
         {
             for (int i = 0; i < gameMode.NumHumans; i++)
             {
@@ -85,14 +104,14 @@ namespace Assets.Scripts.Core
                     Credits = 100000m,
                     Catapult = ConvertCatapult(playerCatapult),
                     Health = 100,
-                    Position = GetSpawnPosition(players)
+                    Position = GetSpawnPosition(availableSpawnPositions)
                 };
 
                 players.Add(humanPlayer);
             }
         }
 
-        private BotPlayer GenerateBot(List<Player> players)
+        private BotPlayer GenerateBot(List<int> availableSpawnPositions)
         {
             var botCatapult = gameMode.AvailableCatapults.GetRandomEntry();
 
@@ -105,40 +124,25 @@ namespace Assets.Scripts.Core
             botPlayer.Credits = 100000m;
             botPlayer.Catapult = ConvertCatapult(botCatapult);
             botPlayer.Health = 100;
-            botPlayer.Position = GetSpawnPosition(players);
+            botPlayer.Position = GetSpawnPosition(availableSpawnPositions);
 
             return botPlayer;
         }
 
-        private GameFrame.Core.Math.Vector2 GetSpawnPosition(List<Player> players)
+        private GameFrame.Core.Math.Vector2 GetSpawnPosition(List<int> availableSpawnPositions)
         {
-            int position = 0;
-            int attemptsLeft = 100;
-            while (attemptsLeft >= 0)
+            if (availableSpawnPositions.Count == 0)
             {
-                position = UnityEngine.Random.Range(-6, 6);
-                if (CheckIfPositionAvailable(position, players))
-                {
-                    break;
-                }
-                attemptsLeft--;
-            }
-            return new GameFrame.Core.Math.Vector2(position, 0.5f);
-        }
-
-        private bool CheckIfPositionAvailable(int position, List<Player> players)
-        {
-            foreach (Player player in players)
-            {
-                if (Math.Abs(player.Position.X - position) < 3)
-                {
-                    return false;
-                }
+                Debug.Log("Spawn pool is empty! Using fallback location.");
+                return new GameFrame.Core.Math.Vector2(-8, 0.5f);
             }
 
-            return true;
-        }
 
+            int randomIndex = UnityEngine.Random.Range(0, availableSpawnPositions.Count);
+            int chosenXPosition = availableSpawnPositions[randomIndex];
+            availableSpawnPositions.RemoveAt(randomIndex);
+            return new GameFrame.Core.Math.Vector2(chosenXPosition, 0.5f);
+        }
 
         private Catapult ConvertCatapult(CatapultDefinition definition)
         {

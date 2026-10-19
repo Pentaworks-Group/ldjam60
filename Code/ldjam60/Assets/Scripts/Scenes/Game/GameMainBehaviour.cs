@@ -324,7 +324,7 @@ namespace Assets.Scripts.Scenes.Game
             var catapultTemplate = GetTemplate(catapultTemplateCache, player.Catapult.TemplateReference);
             Renderer cataRenderer = catapultTemplate.GetComponentInChildren<Renderer>();
             var catWidth = cataRenderer.bounds.size.x;
-            var height = landBehaviour.CreateFlatSurface(player.Position.X, catWidth * 1.08f);
+            var height = landBehaviour.CreateFlatSurface(player.Position.X, catWidth * 1.02f);
 
             var position = new UnityEngine.Vector3(player.Position.X, height + 0.5f, 0); // + cataRenderer.bounds.extents.y + 2
             player.Position = new(player.Position.X, height + 0.5f);

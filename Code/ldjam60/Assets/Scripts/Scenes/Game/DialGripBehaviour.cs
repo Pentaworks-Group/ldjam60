@@ -6,14 +6,9 @@ namespace Assets.Scripts.Scenes.Game
 {
     public class DialGripBehaviour : MonoBehaviour, IDragHandler
     {
-
-        [SerializeField]
-        private float rotationSpeed = 0.005f;
         [SerializeField]
         private DialBehaviour dialBehaviour;
 
-
-        private Vector2 rotationCenter;
         private Button targetButton;
 
         void Awake()

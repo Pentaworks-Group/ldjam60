@@ -45,6 +45,10 @@ namespace Assets.Scripts.Map
         public float CreateFlatSurface(float centerCoordinate, float width)
         {
             int centerX = GetIndexFromCoordinateX(centerCoordinate);
+            if (centerX < 0 || centerX >= currentMap.Size.X)
+            {
+                return 0;
+            }
             int half = Mathf.CeilToInt((width / scaleX) / 2);
             //Debug.Log($"Creating surface at {centerCoordinate} with width {width} -> {centerX}, {half}");
             int start = Mathf.Max(0, centerX - half);
