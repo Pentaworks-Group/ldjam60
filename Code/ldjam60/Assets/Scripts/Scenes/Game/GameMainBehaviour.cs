@@ -450,7 +450,7 @@ namespace Assets.Scripts.Scenes.Game
 
                     ShowGameOver(lastPlayer.Player);
                 }
-                if (playerBehaviour.IsActive)
+                if (Base.Core.Game.State.CurrentPlayer.ID == playerBehaviour.Player.ID)
                 {
                     MoveToNextPlayer();
                 }
