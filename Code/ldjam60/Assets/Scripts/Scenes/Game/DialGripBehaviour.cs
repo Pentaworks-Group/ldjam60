@@ -43,9 +43,17 @@ namespace Assets.Scripts.Scenes.Game
             Vector2 direction = screenPosition - dialScreenPos;
 
             float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            if (targetAngle < 0f)
+            {
+                targetAngle += 360f;
+            }
 
+            //targetAngle = Mathf.Clamp(targetAngle, 0f, 180f);
 
-            targetAngle = Mathf.Clamp(targetAngle, 0f, 180f);
+            if (targetAngle > 180f)
+            {
+                targetAngle = targetAngle < 270f ? 180f : 0f;
+            }
 
             float currentPercentage = Mathf.InverseLerp(180f, 0f, targetAngle);
 

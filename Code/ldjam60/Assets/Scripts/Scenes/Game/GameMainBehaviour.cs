@@ -452,7 +452,7 @@ namespace Assets.Scripts.Scenes.Game
 
                 this.playerBehaviours.Remove(playerBehaviour.Player.ID);
 
-                if (this.playerBehaviours.Count <= 1)
+                if (this.playerBehaviours.Count == 1)
                 {
                     var lastPlayer = this.playerBehaviours.Values.First();
 
