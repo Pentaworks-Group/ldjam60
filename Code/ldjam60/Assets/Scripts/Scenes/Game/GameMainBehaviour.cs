@@ -2,6 +2,7 @@ using Assets.Scripts.Core;
 using Assets.Scripts.Core.Models;
 using Assets.Scripts.Core.Models.Players;
 using Assets.Scripts.Map;
+using Assets.Scripts.Prefabs;
 using GameFrame.Core.Extensions;
 using System;
 using System.Collections.Generic;
@@ -18,20 +19,22 @@ namespace Assets.Scripts.Scenes.Game
         private readonly Dictionary<String, GameObject> projectileTemplateCache = new Dictionary<String, GameObject>();
         private readonly Dictionary<Guid, PlayerBehaviour> playerBehaviours = new Dictionary<Guid, PlayerBehaviour>();
 
-        [SerializeField] 
+        [SerializeField]
         private Image backgroundImage;
-        [SerializeField] 
+        [SerializeField]
         private Transform objectContainer;
-        [SerializeField] 
+        [SerializeField]
         private GameObject templateRootObject;
-        [SerializeField] 
+        [SerializeField]
         private LandBehaviour landBehaviour;
+        [SerializeField]
+        private InputUIBehaviour inputUIBehaviour;
 
-        [SerializeField] 
+        [SerializeField]
         private DialScriptableObjectScript angleDial;
-        [SerializeField] 
+        [SerializeField]
         private DialScriptableObjectScript powerDial;
-        [SerializeField] 
+        [SerializeField]
         private GameOverBehaviour gameOverBehaviour;
 
         public void OnRetryClicked()
@@ -47,9 +50,25 @@ namespace Assets.Scripts.Scenes.Game
             Base.Core.Game.ChangeScene(Constants.Scenes.MainMenu);
         }
 
+        public void Fire()
+        {
+            var player = Base.Core.Game.State.CurrentPlayer;
+            if (player == null)
+            {
+                return;
+            }
+            var playerBehaviour = playerBehaviours[player.ID];
+            if (playerBehaviour != null && playerBehaviour.Player.IsHuman)
+            {
+                var humanPlayer = playerBehaviour as HumanPlayerBehaviour;
+                humanPlayer.Fire();
+            }
+        }
+
         private void Awake()
         {
             Base.Core.Game.ExecuteAfterInstantation(Init);
+            templateRootObject.SetActive(false);
         }
 
         private void Init()
@@ -103,7 +122,7 @@ namespace Assets.Scripts.Scenes.Game
                 {
                     var renderer = playerBehaviour.GetComponentInChildren<Renderer>();
 
-                    var position = new FrameVector3(playerBehaviour.Player.Position.X, renderer.bounds.extents.y + 0.1f, 0f);
+                    var position = new FrameVector3(playerBehaviour.Player.Position.X, playerBehaviour.Player.Position.Y + renderer.bounds.extents.y + 0.1f, 0f);
 
                     var projectile = new Projectile()
                     {
@@ -121,7 +140,7 @@ namespace Assets.Scripts.Scenes.Game
 
                     var catapultRotation = playerBehaviour.transform.rotation;
 
-                    var rotation = Quaternion.Euler(0f, 0f, playerBehaviour.transform.rotation .y - playerBehaviour.Player.Catapult.FiringAngle);
+                    var rotation = Quaternion.Euler(0f, 0f, playerBehaviour.transform.rotation.y - playerBehaviour.Player.Catapult.FiringAngle);
                     var direction = catapultRotation.normalized * rotation * Vector3.up;
 
                     var force = 0.1f * playerBehaviour.Player.Catapult.FiringPower * direction.normalized;
@@ -199,7 +218,7 @@ namespace Assets.Scripts.Scenes.Game
 
                 if (nextPlayer.IsHuman)
                 {
-                    EnableInput();                    
+                    EnableInput();
                 }
             }
         }
@@ -227,12 +246,14 @@ namespace Assets.Scripts.Scenes.Game
         {
             this.angleDial.OnValueChanged += AngleDial_OnValueChanged;
             this.powerDial.OnValueChanged += StrengthDial_OnValueChanged;
+            inputUIBehaviour.EnableUI();
         }
 
         private void DisableInput()
         {
             this.angleDial.OnValueChanged -= AngleDial_OnValueChanged;
             this.powerDial.OnValueChanged -= StrengthDial_OnValueChanged;
+            inputUIBehaviour.DisableUI();
         }
 
         private void ShowGameOver(Player winner)
@@ -291,7 +312,7 @@ namespace Assets.Scripts.Scenes.Game
             var height = landBehaviour.CreateFlatSurface(player.Position.X, catWidth * 1.08f);
 
             var position = new UnityEngine.Vector3(player.Position.X, height + 0.5f, 0); // + cataRenderer.bounds.extents.y + 2
-
+            player.Position = new(player.Position.X, height + 0.5f);
             //var catapultTemplate = GetTemplate(catapultTemplateCache, player.Catapult.TemplateReference);
             var spawnedCatapult = SpawnObject(catapultTemplate, objectContainer, player.Name, position);
 
@@ -412,15 +433,15 @@ namespace Assets.Scripts.Scenes.Game
                 if (playerBehaviour.IsActive)
                 {
                     playerBehaviour.Deactivate();
-                }    
+                }
 
                 this.playerBehaviours.Remove(playerBehaviour.Player.ID);
 
                 if (this.playerBehaviours.Count == 1)
                 {
                     var lastPlayer = this.playerBehaviours.Values.First();
-                    
-                    lastPlayer.Deactivate();                    
+
+                    lastPlayer.Deactivate();
 
                     ShowGameOver(lastPlayer.Player);
                 }

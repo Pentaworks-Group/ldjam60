@@ -51,7 +51,7 @@ namespace Assets.Scripts.Scenes.Game
                 {
                     if (myRigidbody.linearVelocity.magnitude < 0.1f)
                     {
-                        MoveFinished?.Invoke(this);
+                         MoveFinished?.Invoke(this);
                     }
                 }
             }

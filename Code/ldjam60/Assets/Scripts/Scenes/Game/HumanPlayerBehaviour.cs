@@ -13,7 +13,7 @@ namespace Assets.Scripts.Scenes.Game
     public class HumanPlayerBehaviour : PlayerBehaviour
     {
         private HumanPlayer humanPlayer;
-        
+
         private InputAction fireAction;
 
         private InputAction aimRightAction;
@@ -31,8 +31,14 @@ namespace Assets.Scripts.Scenes.Game
 
         public override Player Player => this.humanPlayer;
 
+
+        public void Fire()
+        {
+            ShotFired.Invoke(this);
+        }
+
         protected override void OnActivate()
-        {            
+        {
             fireAction.performed += FireAction_performed;
 
             aimLeftAction.Hook(onStarted: AimLeftAction_Started, onCancelled: AimLeftAction_Cancelled);
@@ -100,7 +106,7 @@ namespace Assets.Scripts.Scenes.Game
 
         private void FireAction_performed(InputAction.CallbackContext obj)
         {
-            ShotFired.Invoke(this);
+            Fire();
         }
 
         private void AimLeftAction_Started(InputAction.CallbackContext context)
@@ -127,7 +133,7 @@ namespace Assets.Scripts.Scenes.Game
 
         private void IncreasePowerAction_Started(InputAction.CallbackContext context)
         {
-            _ = StartCoroutine(increasePower);            
+            _ = StartCoroutine(increasePower);
         }
 
         private void IncreasePowerAction_Cancelled(InputAction.CallbackContext context)

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using static UnityEngine.UI.Button;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Scenes.Game.Variables
 {
@@ -13,9 +14,21 @@ namespace Assets.Scripts.Scenes.Game.Variables
         private ButtonClickedEvent onClick;
 
         private bool pressed;
+        private Button targetButton;
+
+        void Awake()
+        {
+            targetButton = GetComponent<Button>();
+        }
+
 
         public void OnPointerDown(PointerEventData eventdata)
         {
+            if (!targetButton.interactable)
+            {
+                return;
+            }
+
             pressed = true;
             StartCoroutine(Repeat());
         }
