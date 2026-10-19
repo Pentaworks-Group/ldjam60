@@ -1,3 +1,4 @@
+using Assets.Scripts.Scenes.Game;
 using System;
 
 using UnityEngine;
@@ -32,7 +33,7 @@ namespace Assets.Scripts
         {
             if (collision.gameObject.TryGetComponent<ObjectsBehaviour>(out var component))
             {
-                TakeImpactDamage(collision.relativeVelocity.sqrMagnitude, component.ImpactDamage);                
+                TakeImpactDamage(collision.relativeVelocity.sqrMagnitude, component.ImpactDamage);
             }
             else
             {
@@ -72,6 +73,10 @@ namespace Assets.Scripts
 
         private void OnObjectDestroyed(GameObject gameObject)
         {
+            if (TryGetComponent<CatapultBehaviour>(out var _))
+            {
+                GameFrame.Base.Audio.Effects.Play("Katapult_Destroy");
+            }
             ObjectDestroyed.Invoke(gameObject);
             Destroy(gameObject);
         }

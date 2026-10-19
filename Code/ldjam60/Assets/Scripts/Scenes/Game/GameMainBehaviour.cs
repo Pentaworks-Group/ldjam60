@@ -118,6 +118,8 @@ namespace Assets.Scripts.Scenes.Game
         {
             if (playerBehaviour != default)
             {
+
+                GameFrame.Base.Audio.Effects.Play("Katapult_shot");
                 var projectileType = playerBehaviour.Player.Catapult.SelectedProjectileType;
 
                 if (projectileType == default)
