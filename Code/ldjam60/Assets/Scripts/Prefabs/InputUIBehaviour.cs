@@ -9,10 +9,6 @@ namespace Assets.Scripts.Prefabs
 		[SerializeField]
 		private List<Button> interactables = new();
 
-        private void Awake()
-        {
-            DisableUI();
-        }
 
         public void EnableUI()
 		{

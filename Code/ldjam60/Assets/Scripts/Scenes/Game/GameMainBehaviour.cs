@@ -53,6 +53,7 @@ namespace Assets.Scripts.Scenes.Game
                 return;
             }
             instance = this;
+            inputUIBehaviour.DisableUI();
             Base.Core.Game.ExecuteAfterInstantation(Init);
             templateRootObject.SetActive(false);
         }
